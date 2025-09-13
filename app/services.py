@@ -247,41 +247,41 @@ class ModelService:
                         
                         if 'provider_info' in config:
                             provider_data = config['provider_info']
+                            # 从配置中获取tokens信息
+                            from .models import TokenInfo
+                            tokens_data = provider_data.get('tokens', {'input': 0.0, 'output': 0.0, 'unit': 'CNY'})
+                            tokens = TokenInfo(
+                                input=tokens_data.get('input', 0.0),
+                                output=tokens_data.get('output', 0.0),
+                                unit=tokens_data.get('unit', 'CNY')
+                            )
                             provider_info = ProviderInfo(
                                 name=plugin_name,
                                 display_name=provider_data.get('display_name', config.get('brand_name', plugin_name)),
-                                api_endpoint=provider_data.get('api_endpoint', config.get('base_url', '')),
-                                reliability_score=provider_data.get('reliability_score', 8.0),
-                                response_time_ms=provider_data.get('response_time_ms', 200),
-                                uptime_percentage=provider_data.get('uptime_percentage', 99.0),
-                                region=provider_data.get('region', 'Global'),
-                                support_streaming=provider_data.get('support_streaming', False)
+                                api_website=provider_data.get('api_website', config.get('base_url', '')),
+                                tokens=tokens
                             )
                             providers.append(provider_info)
                         else:
                             # 如果没有provider_info配置，使用默认值
+                            from .models import TokenInfo
+                            default_tokens = TokenInfo(input=0.0, output=0.0, unit='CNY')
                             provider_info = ProviderInfo(
                                 name=plugin_name,
                                 display_name=plugin.config.brand_name,
-                                api_endpoint=getattr(plugin.config, 'base_url', ''),
-                                reliability_score=8.5,
-                                response_time_ms=150,
-                                uptime_percentage=99.5,
-                                region="Global",
-                                support_streaming=True
+                                api_website=getattr(plugin.config, 'base_url', ''),
+                                tokens=default_tokens
                             )
                             providers.append(provider_info)
                     else:
                         # 配置文件不存在时使用默认值
+                        from .models import TokenInfo
+                        default_tokens = TokenInfo(input=0.0, output=0.0, unit='CNY')
                         provider_info = ProviderInfo(
                             name=plugin_name,
                             display_name=plugin.config.brand_name,
-                            api_endpoint=getattr(plugin.config, 'base_url', ''),
-                            reliability_score=8.5,
-                            response_time_ms=150,
-                            uptime_percentage=99.5,
-                            region="Global",
-                            support_streaming=True
+                            api_website=getattr(plugin.config, 'base_url', ''),
+                            tokens=default_tokens
                         )
                         providers.append(provider_info)
                 except Exception as e:
@@ -304,16 +304,41 @@ class ModelService:
         plugin = self.plugins.get(provider_name)
         if not plugin or not plugin.enabled:
             return None
-            
+        
+        # 尝试从配置文件读取提供商信息
+        try:
+            config_path = self.plugin_loader.plugins_dir / provider_name / "config.json"
+            if config_path.exists():
+                import json
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    config = json.load(f)
+                
+                if 'provider_info' in config:
+                    provider_data = config['provider_info']
+                    from .models import TokenInfo
+                    tokens_data = provider_data.get('tokens', {'input': 0.0, 'output': 0.0, 'unit': 'CNY'})
+                    tokens = TokenInfo(
+                        input=tokens_data.get('input', 0.0),
+                        output=tokens_data.get('output', 0.0),
+                        unit=tokens_data.get('unit', 'CNY')
+                    )
+                    return ProviderInfo(
+                        name=provider_name,
+                        display_name=provider_data.get('display_name', plugin.config.brand_name),
+                        api_website=provider_data.get('api_website') or provider_data.get('website', getattr(plugin.config, 'base_url', 'https://example.com')),
+                        tokens=tokens
+                    )
+        except Exception as e:
+            print(f"Error loading provider config for {provider_name}: {e}")
+        
+        # 使用默认值
+        from .models import TokenInfo
+        default_tokens = TokenInfo(input=0.0, output=0.0, unit='CNY')
         return ProviderInfo(
             name=provider_name,
             display_name=plugin.config.brand_name,
-            api_endpoint=getattr(plugin.config, 'base_url', ''),
-            reliability_score=8.5,
-            response_time_ms=150,
-            uptime_percentage=99.5,
-            region="Global",
-            support_streaming=True
+            api_website=getattr(plugin.config, 'base_url', 'https://example.com'),
+            tokens=default_tokens
         )
     
     async def get_models_by_provider(self, provider_name: str) -> List[ModelInfo]:
@@ -338,7 +363,6 @@ class ModelService:
             if provider_info:
                 for model in models:
                     model.providers = [provider_info]
-                    model.recommended_provider = provider_name
             return models
         except Exception as e:
             print(f"Error getting models from provider {provider_name}: {e}")
@@ -370,6 +394,5 @@ class ModelService:
                 except Exception as e:
                     print(f"Error checking models from provider {plugin_name}: {e}")
         
-        # 按可靠性评分排序（降序）
-        providers.sort(key=lambda p: p.reliability_score, reverse=True)
+        # 返回提供商列表
         return providers

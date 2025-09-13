@@ -21,23 +21,26 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
+from ..base import BasePlugin, PluginConfig
+from ...models import ModelInfo, TokenInfo, ProviderInfo
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class AIHubMixPlugin:
+class AihubmixPlugin(BasePlugin):
     """
     AIHubMix 价格爬虫插件
     
     从 aihubmix.com 获取AI模型价格信息
     """
     
-    def __init__(self):
+    def __init__(self, config: PluginConfig):
         """初始化插件"""
+        super().__init__(config)
         self.base_url = "https://aihubmix.com/models"
         self.driver = None
-        self.config = {
+        self.driver_config = {
             'timeout': 30,
             'wait_time': 5,
             'headless': True
@@ -52,7 +55,7 @@ class AIHubMixPlugin:
             webdriver.Chrome: 配置好的Chrome驱动
         """
         chrome_options = Options()
-        if self.config['headless']:
+        if self.driver_config['headless']:
             chrome_options.add_argument('--headless')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
@@ -62,7 +65,7 @@ class AIHubMixPlugin:
         
         try:
             driver = webdriver.Chrome(options=chrome_options)
-            driver.set_page_load_timeout(self.config['timeout'])
+            driver.set_page_load_timeout(self.driver_config['timeout'])
             return driver
         except Exception as e:
             logger.error(f"设置Chrome驱动失败: {e}")
@@ -128,7 +131,19 @@ class AIHubMixPlugin:
                 token_info = self._parse_token_info(model_data)
                 
                 # 创建提供商信息
-                provider_info = self._create_provider_info(model_data, token_info)
+                provider_info_obj = self._create_provider_info(model_data, token_info)
+                
+                # 将ProviderInfo对象转换为字典
+                provider_info = {
+                    'name': provider_info_obj.name,
+                    'display_name': provider_info_obj.display_name,
+                    'api_website': provider_info_obj.api_website,
+                    'tokens': {
+                        'input': provider_info_obj.tokens.input,
+                        'output': provider_info_obj.tokens.output,
+                        'unit': provider_info_obj.tokens.unit
+                    }
+                }
                 
                 # 构建符合ModelInfo格式的数据
                 model_info = {
@@ -163,7 +178,7 @@ class AIHubMixPlugin:
             int: 上下文长度数值
         """
         # 从配置文件获取默认窗口大小
-        default_window = self.config.get('extra_config', {}).get('data_format', {}).get('default_window_size', 4096)
+        default_window = self.config.extra_config.get('data_format', {}).get('default_window_size', 4096)
         
         if not context_length:
             return default_window
@@ -196,7 +211,7 @@ class AIHubMixPlugin:
         """
         try:
             # 从配置文件获取价格提取设置
-            price_config = self.config.get('extra_config', {}).get('data_format', {}).get('price_extraction', {})
+            price_config = self.config.extra_config.get('data_format', {}).get('price_extraction', {})
             input_field = price_config.get('input_field', 'display_input')
             output_field = price_config.get('output_field', 'display_output')
             
@@ -215,7 +230,7 @@ class AIHubMixPlugin:
                     unit = "CNY" if input_price > 1 else "USD"
                 else:
                     # 使用默认货币
-                    unit = self.config.get('extra_config', {}).get('default_currency', 'USD')
+                    unit = self.config.extra_config.get('default_currency', 'USD')
                 
                 return {
                     'input': input_price,
@@ -278,38 +293,48 @@ class AIHubMixPlugin:
             Dict: ProviderInfo格式的提供商信息
         """
         # 从配置文件获取提供商信息
-        data_format_config = self.config.get('extra_config', {}).get('data_format', {})
+        data_format_config = self.config.extra_config.get('data_format', {})
         
         provider_name = data_format_config.get('provider_name', 'aihubmix')
         display_name = data_format_config.get('provider_display_name', 'AiHubMix')
         api_website = data_format_config.get('provider_website', 'https://aihubmix.com')
         
-        provider_info = {
-            'name': provider_name,
-            'display_name': display_name,
-            'api_website': api_website
-        }
+        # 如果api_website为None，使用默认值
+        if api_website is None:
+            api_website = 'https://aihubmix.com'
         
-        # 添加价格信息
+        # 创建TokenInfo对象
         if token_info:
-            provider_info['tokens'] = token_info
+            tokens = TokenInfo(
+                input=token_info.get('input', 0.0),
+                output=token_info.get('output', 0.0),
+                unit=token_info.get('unit', 'USD')
+            )
         else:
             # 提供默认价格信息
-            default_currency = self.config.get('extra_config', {}).get('default_currency', 'USD')
-            provider_info['tokens'] = {
-                'input': 0.0,
-                'output': 0.0,
-                'unit': default_currency
-            }
+            default_currency = self.config.extra_config.get('default_currency', 'USD')
+            tokens = TokenInfo(
+                input=0.0,
+                output=0.0,
+                unit=default_currency
+            )
+        
+        # 创建ProviderInfo对象
+        provider_info = ProviderInfo(
+            name=provider_name,
+            display_name=display_name,
+            api_website=api_website,
+            tokens=tokens
+        )
         
         return provider_info
     
-    def get_models(self) -> List[Dict]:
+    async def get_models(self) -> List[ModelInfo]:
         """
-        获取模型列表，返回符合editv3.json接口规范的数据格式
+        获取模型列表，返回ModelInfo对象列表
         
         Returns:
-            List[Dict]: 符合ModelInfo格式的模型列表
+            List[ModelInfo]: ModelInfo对象列表
         """
         try:
             # 设置WebDriver
@@ -320,12 +345,12 @@ class AIHubMixPlugin:
             self.driver.get(self.base_url)
             
             # 等待页面加载
-            logger.info(f"等待页面加载 {self.config['wait_time']} 秒...")
-            time.sleep(self.config['wait_time'])
+            logger.info(f"等待页面加载 {self.driver_config['wait_time']} 秒...")
+            time.sleep(self.driver_config['wait_time'])
             
             # 等待React应用加载完成
             try:
-                WebDriverWait(self.driver, self.config['timeout']).until(
+                WebDriverWait(self.driver, self.driver_config['timeout']).until(
                     EC.presence_of_element_located((By.ID, "root"))
                 )
                 logger.info("React应用加载完成")
@@ -341,11 +366,51 @@ class AIHubMixPlugin:
                 logger.error("未能从localStorage获取到数据")
                 return []
             
-            # 解析数据为符合接口规范的格式
+            # 解析数据为ModelInfo对象列表
             models = self._parse_model_data(raw_data)
             
-            logger.info(f"成功获取 {len(models)} 个模型，数据格式符合editv3.json规范")
-            return models
+            # 转换为ModelInfo对象列表
+            formatted_models = []
+            for model_data in models:
+                # 创建TokenInfo
+                token_info_dict = model_data.get('tokens')
+                token_info = TokenInfo(
+                    input=token_info_dict.get('input', 0.0),
+                    output=token_info_dict.get('output', 0.0),
+                    unit=token_info_dict.get('unit', 'CNY')
+                ) if token_info_dict else TokenInfo(input=0.0, output=0.0, unit='CNY')
+                
+                # 创建ProviderInfo列表
+                provider_infos = []
+                for provider_dict in model_data.get('providers', []):
+                    provider_tokens_dict = provider_dict.get('tokens', {})
+                    provider_tokens = TokenInfo(
+                        input=provider_tokens_dict.get('input', 0.0),
+                        output=provider_tokens_dict.get('output', 0.0),
+                        unit=provider_tokens_dict.get('unit', 'CNY')
+                    )
+                    
+                    provider_info = ProviderInfo(
+                        name=provider_dict.get('name', 'aihubmix'),
+                        display_name=provider_dict.get('display_name', 'AIHubMix'),
+                        api_website=provider_dict.get('api_website', 'https://aihubmix.com'),
+                        tokens=provider_tokens
+                    )
+                    provider_infos.append(provider_info)
+                
+                # 创建ModelInfo对象
+                model_info = ModelInfo(
+                    brand=model_data.get('brand', 'Unknown'),
+                    name=model_data.get('name', 'Unknown'),
+                    data_amount=model_data.get('data_amount'),
+                    window=model_data.get('window', 4096),
+                    providers=provider_infos
+                )
+                
+                formatted_models.append(model_info)
+            
+            logger.info(f"成功获取 {len(formatted_models)} 个模型，转换为ModelInfo对象")
+            return formatted_models
             
         except Exception as e:
             logger.error(f"获取模型数据失败: {e}")
@@ -387,7 +452,7 @@ class AIHubMixPlugin:
         logger.warning(f"未找到模型: {model_name}")
         return None
     
-    def validate_config(self) -> bool:
+    async def validate_config(self) -> bool:
         """
         验证插件配置
         
@@ -406,17 +471,28 @@ class AIHubMixPlugin:
 
 # 测试代码
 if __name__ == "__main__":
-    plugin = AIHubMixPlugin()
+    # 创建测试配置
+    from ..base import PluginConfig
+    test_config = PluginConfig(
+        name="aihubmix",
+        version="2.0",
+        description="AIHubMix模型价格爬虫插件",
+        author="Assistant",
+        brand_name="AIHubMix"
+    )
+    
+    plugin = AihubmixPlugin(test_config)
     
     # 验证配置
-    if not plugin.validate_config():
+    import asyncio
+    if not asyncio.run(plugin.validate_config()):
         print("配置验证失败，请检查Chrome WebDriver是否正确安装")
         exit(1)
     
     print("开始获取模型数据...")
     
     # 获取模型数据
-    models = plugin.get_models()
+    models = asyncio.run(plugin.get_models())
     print(f"\n获取到 {len(models)} 个模型")
     
     # 显示前5个模型的详细信息（新格式）

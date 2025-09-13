@@ -1,0 +1,50 @@
+{
+    "name": "aihubmix",
+    "version": "1.0.0",
+    "description": "AiHubMix模型聚合平台插件，提供多种AI模型的价格信息",
+    "author": "Your Name",
+    "brand_name": "AiHubMix",
+    "enabled": true,
+    "api_config": {
+        "base_url": "https://aihubmix.com",
+        "api_key_required": false,
+        "rate_limit": 60
+    },
+    "provider_info": {
+        "website": "https://aihubmix.com",
+        "support_email": "support@aihubmix.com",
+        "documentation": "https://aihubmix.com/docs"
+    },
+    "extra_config": {
+        "base_url": "https://aihubmix.com",
+        "supported_brands": [
+            "DeepSeek",
+            "OpenAI",
+            "Anthropic",
+            "Google"
+        ],
+        "default_currency": "USD",
+        "pricing_update_interval": 3600,
+        "cache_ttl": 1800,
+        "timeout": 30,
+        "retry_attempts": 3,
+        "use_puppeteer": true,
+        "scraping_config": {
+            "models_endpoint": "/models",
+            "wait_time": 2000,
+            "screenshot_enabled": false
+        },
+        "data_format": {
+            "output_format": "editv3_compatible",
+            "provider_name": "aihubmix",
+            "provider_display_name": "AiHubMix",
+            "provider_website": "https://aihubmix.com",
+            "default_window_size": 4096,
+            "price_extraction": {
+                "input_field": "display_input",
+                "output_field": "display_output",
+                "currency_detection": "auto"
+            }
+        }
+    }
+}
