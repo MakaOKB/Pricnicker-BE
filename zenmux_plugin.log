@@ -306,3 +306,44 @@
 2025-09-13 14:24:37,193 - app.plugins.zenmux.plugin - INFO - 🎉 成功获取 34 个有效模型
 2025-09-13 14:24:37,194 - app.plugins.zenmux.plugin - INFO - 📋 涉及品牌: Anthropic, DeepSeek, Google, MoonshotAI, OpenAI, Qwen, Z.AI
 2025-09-13 14:24:37,194 - app.plugins.zenmux.plugin - INFO - 🔧 资源清理完成
+2025-09-13 15:32:56,786 - app.plugins.zenmux.plugin - INFO - ZenMux插件初始化完成
+2025-09-13 15:32:56,787 - app.plugins.zenmux.plugin - INFO - 开始配置验证...
+2025-09-13 15:32:56,787 - app.plugins.zenmux.plugin - INFO - 测试网络连接: https://zenmux.ai
+2025-09-13 15:32:59,069 - app.plugins.zenmux.plugin - INFO - 网络连接正常，状态码: 200
+2025-09-13 15:32:59,069 - app.plugins.zenmux.plugin - INFO - 测试API连接...
+2025-09-13 15:33:00,456 - app.plugins.zenmux.plugin - INFO - API连接测试通过
+2025-09-13 15:33:00,456 - app.plugins.zenmux.plugin - INFO - ✅ 所有配置验证通过
+2025-09-13 15:33:00,456 - app.plugins.zenmux.plugin - INFO - 🚀 开始获取ZenMux模型数据
+2025-09-13 15:33:00,456 - app.plugins.zenmux.plugin - INFO - 📡 使用API获取真实数据...
+2025-09-13 15:33:00,456 - app.plugins.zenmux.plugin - INFO - 正在调用ZenMux API (尝试 1/3)
+2025-09-13 15:33:03,449 - app.plugins.zenmux.plugin - INFO - ✅ API调用成功，获取到 34 个模型
+2025-09-13 15:33:03,455 - app.plugins.zenmux.plugin - INFO - 📊 获取到 34 条原始数据，开始转换格式...
+2025-09-13 15:33:03,457 - app.plugins.zenmux.plugin - INFO - 📈 数据获取完成:
+2025-09-13 15:33:03,457 - app.plugins.zenmux.plugin - INFO -    ✅ 成功转换: 34 个模型
+2025-09-13 15:33:03,457 - app.plugins.zenmux.plugin - INFO -    ❌ 转换失败: 0 个模型
+2025-09-13 15:33:03,457 - app.plugins.zenmux.plugin - INFO -    ⏱️ 总耗时: 3.00 秒
+2025-09-13 15:33:03,457 - app.plugins.zenmux.plugin - INFO - 🎉 成功获取 34 个有效模型
+2025-09-13 15:33:03,457 - app.plugins.zenmux.plugin - INFO - 📋 涉及品牌: Anthropic, DeepSeek, Google, MoonshotAI, OpenAI, Qwen, Z.AI
+2025-09-13 15:33:03,457 - app.plugins.zenmux.plugin - INFO - 🔧 资源清理完成
+2025-09-13 15:35:25,600 - app.plugins.zenmux.plugin - INFO - ZenMux插件初始化完成
+2025-09-13 15:35:25,601 - app.plugins.zenmux.plugin - INFO - 正在调用ZenMux API (尝试 1/3)
+2025-09-13 15:35:27,496 - app.plugins.zenmux.plugin - INFO - ✅ API调用成功，获取到 34 个模型
+2025-09-13 15:35:27,506 - app.plugins.zenmux.plugin - INFO - 成功转换 34 个模型数据
+2025-09-13 15:40:05,574 - app.plugins.zenmux.plugin - INFO - ZenMux插件初始化完成
+2025-09-13 15:40:05,575 - app.plugins.zenmux.plugin - INFO - 正在调用ZenMux API (尝试 1/3)
+2025-09-13 15:40:08,701 - app.plugins.zenmux.plugin - INFO - ✅ API调用成功，获取到 34 个模型
+2025-09-13 15:40:08,708 - app.plugins.zenmux.plugin - INFO - 成功转换 34 个模型数据
+2025-09-13 15:40:42,553 - app.plugins.zenmux.plugin - INFO - ZenMux插件初始化完成
+2025-09-13 15:40:42,554 - app.plugins.zenmux.plugin - INFO - 🚀 开始获取ZenMux模型数据
+2025-09-13 15:40:42,554 - app.plugins.zenmux.plugin - INFO - 📡 使用API获取真实数据...
+2025-09-13 15:40:42,554 - app.plugins.zenmux.plugin - INFO - 正在调用ZenMux API (尝试 1/3)
+2025-09-13 15:40:44,680 - app.plugins.zenmux.plugin - INFO - ✅ API调用成功，获取到 34 个模型
+2025-09-13 15:40:44,686 - app.plugins.zenmux.plugin - INFO - 📊 获取到 34 条原始数据，开始转换格式...
+2025-09-13 15:40:44,687 - app.plugins.zenmux.plugin - INFO - 成功转换 34 个模型数据
+2025-09-13 15:40:44,688 - app.plugins.zenmux.plugin - INFO - 📈 数据获取完成:
+2025-09-13 15:40:44,689 - app.plugins.zenmux.plugin - INFO -    ✅ 成功转换: 34 个模型
+2025-09-13 15:40:44,689 - app.plugins.zenmux.plugin - INFO -    ❌ 转换失败: 0 个模型
+2025-09-13 15:40:44,689 - app.plugins.zenmux.plugin - INFO -    ⏱️ 总耗时: 2.13 秒
+2025-09-13 15:40:44,689 - app.plugins.zenmux.plugin - INFO - 🎉 成功获取 34 个有效模型
+2025-09-13 15:40:44,689 - app.plugins.zenmux.plugin - INFO - 📋 涉及品牌: 
+2025-09-13 15:40:44,689 - app.plugins.zenmux.plugin - INFO - 🔧 资源清理完成

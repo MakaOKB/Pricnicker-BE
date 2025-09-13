@@ -4,7 +4,7 @@
 支持多个品牌的模型，包括OpenAI、Anthropic、Google等。
 """
 
-from .plugin import ZenMuxPlugin
+from .plugin import ZenmuxPlugin
 
 __version__ = "1.0.0"
 __author__ = "PricNicker Team"

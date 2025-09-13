@@ -67,13 +67,9 @@ class ModelService:
                 
             try:
                 models = await plugin.get_models()
-                # 为每个模型添加提供商信息
-                provider_info = await self.get_provider_by_name(plugin_name)
-                if provider_info:
-                    for model in models:
-                        # 直接设置当前提供商信息，避免循环调用
-                        model.providers = [provider_info]
-                        model.recommended_provider = plugin_name
+                # 直接使用插件返回的模型信息，不覆盖价格数据
+                for model in models:
+                    model.recommended_provider = plugin_name
                 
                 all_models.extend(models)
             except Exception as e:

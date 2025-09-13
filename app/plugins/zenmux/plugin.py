@@ -25,32 +25,8 @@ import re
 import requests
 from typing import Dict, List, Optional
 from requests.exceptions import RequestException, Timeout, ConnectionError
-# from ..base import BasePlugin, PluginConfig
-# from ...models import ModelInfo, TokenInfo, ProviderInfo
-
-# 临时类定义，用于独立测试
-class PluginConfig:
-    def __init__(self):
-        pass
-
-class BasePlugin:
-    def __init__(self, config=None):
-        self.config = config or PluginConfig()
-
-class ModelInfo:
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-class TokenInfo:
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-class ProviderInfo:
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+from ..base import BasePlugin, PluginConfig
+from ...models import ModelInfo, TokenInfo, ProviderInfo
 
 # 配置日志
 logging.basicConfig(
@@ -578,22 +554,20 @@ class ZenmuxPlugin(BasePlugin):
             
             logger.info(f"📊 获取到 {len(dynamic_data)} 条原始数据，开始转换格式...")
             
+            # 先转换API数据为内部格式
+            converted_data = self._convert_api_models_to_internal_format(dynamic_data)
+            
             # 转换为标准格式
             successful_conversions = 0
             failed_conversions = 0
             
-            for i, model_data in enumerate(dynamic_data):
+            for i, model_data in enumerate(converted_data):
                 try:
                     # 数据验证
                     if not self._validate_model_data(model_data):
                         logger.warning(f"模型数据 {i+1} 验证失败，跳过")
                         failed_conversions += 1
                         continue
-                    
-                    # 调试：打印价格相关字段
-                    if i < 3:  # 只打印前3个模型的调试信息
-                        logger.info(f"模型 {i+1} 价格字段: pricing_prompt={model_data.get('pricing_prompt')}, pricing_completion={model_data.get('pricing_completion')}")
-                        logger.info(f"模型 {i+1} 所有字段: {list(model_data.keys())}")
                     
                     # 从name字段提取brand信息
                     model_name = model_data.get('name', 'Unknown')
@@ -626,10 +600,10 @@ class ZenmuxPlugin(BasePlugin):
                             except (ValueError, TypeError):
                                 data_amount = None
                     
-                    # 创建TokenInfo对象 - 使用API返回的正确字段名
-                    input_price = float(model_data.get('pricing_prompt', 0.0))
-                    output_price = float(model_data.get('pricing_completion', 0.0))
-                    currency = 'USD'  # ZenMux API返回的价格单位为USD
+                    # 创建TokenInfo对象 - 使用转换后的正确字段名
+                    input_price = float(model_data.get('input_price', 0.0))
+                    output_price = float(model_data.get('output_price', 0.0))
+                    currency = model_data.get('currency', 'USD')  # 使用转换后的货币单位
                     
                     token_info = TokenInfo(
                         input=input_price,
@@ -637,9 +611,7 @@ class ZenmuxPlugin(BasePlugin):
                         unit=currency
                     )
                     
-                    # 调试：打印TokenInfo创建后的值
-                    if i < 3:
-                        logger.info(f"模型 {i+1} TokenInfo: input={token_info.input}, output={token_info.output}, unit={token_info.unit}")
+
                     
                     # 创建ProviderInfo对象
                     provider_info = ProviderInfo(
@@ -677,11 +649,6 @@ class ZenmuxPlugin(BasePlugin):
                         } for provider in model_info.providers],
                         'recommended_provider': model_info.recommended_provider
                     }
-                    
-                    # 调试：打印验证字典中的tokens值
-                    if i < 3:
-                        tokens_dict = model_dict['providers'][0]['tokens']
-                        logger.info(f"模型 {i+1} 验证字典tokens: input={tokens_dict['input']}, output={tokens_dict['output']}, unit={tokens_dict['unit']}")
                     
                     if self._validate_converted_model(model_dict):
                         models.append(model_info)
