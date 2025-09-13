@@ -22778,3 +22778,1213 @@ output
 2025-09-13 17:20:14,757 - app.plugins.zenmux.plugin - INFO - 🎉 成功获取 34 个有效模型
 2025-09-13 17:20:14,757 - app.plugins.zenmux.plugin - INFO - 📋 涉及品牌: 
 2025-09-13 17:20:14,757 - app.plugins.zenmux.plugin - INFO - 🔧 资源清理完成
+2025-09-13 17:21:01,568 - app.plugins.wolfai.plugin - INFO - WolfAI插件初始化完成
+2025-09-13 17:21:02,271 - app.plugins.wolfai.plugin - INFO - WolfAI插件配置验证通过
+2025-09-13 17:21:02,272 - app.plugins.dmx.plugin - INFO - DMXAPI插件初始化完成
+2025-09-13 17:21:02,272 - app.plugins.dmx.plugin - INFO - 开始验证DMXAPI插件配置...
+2025-09-13 17:21:02,818 - app.plugins.dmx.plugin - INFO - DMXAPI配置验证成功
+2025-09-13 17:21:02,820 - app.plugins.aihubmix.plugin - INFO - AIHubMix插件初始化完成
+2025-09-13 17:21:06,489 - app.plugins.aihubmix.plugin - INFO - API 连接测试成功
+2025-09-13 17:21:06,494 - app.plugins.zenmux.plugin - INFO - ZenMux插件初始化完成
+2025-09-13 17:21:06,494 - app.plugins.zenmux.plugin - INFO - 开始配置验证...
+2025-09-13 17:21:06,494 - app.plugins.zenmux.plugin - INFO - 测试网络连接: https://zenmux.ai
+2025-09-13 17:21:07,972 - app.plugins.zenmux.plugin - INFO - 网络连接正常，状态码: 200
+2025-09-13 17:21:07,972 - app.plugins.zenmux.plugin - INFO - 测试API连接...
+2025-09-13 17:21:08,718 - app.plugins.zenmux.plugin - INFO - API连接测试通过
+2025-09-13 17:21:08,718 - app.plugins.zenmux.plugin - INFO - ✅ 所有配置验证通过
+2025-09-13 17:21:08,718 - app.plugins.wolfai.plugin - INFO - 开始请求WolfAI API获取模型数据
+2025-09-13 17:21:08,788 - app.plugins.wolfai.plugin - INFO - 成功获取WolfAI API数据
+2025-09-13 17:21:08,788 - app.plugins.wolfai.plugin - INFO - 开始解析WolfAI模型数据，共167个模型
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_inpaint 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 text-embedding-3-large 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 grok-3 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-sonnet-4-20250514 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-image 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-transcribe 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 qwen3-coder-480b-a35b-instruct 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-pro-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 o1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 tts-1-hd 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 dall-e-3 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-pro-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.15, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.15, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-pro-preview-06-05 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3-2025-04-16 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 qwen3-next-80b-a3b-instruct 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_custom_zoom 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-opus-4-20250514 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 grok-4-0709 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-mini-tts 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 GLM-4.5V 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3-pro 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-2024-05-13 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-3-5-haiku-20241022 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-pro-preview-05-06 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_describe 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-3-7-sonnet-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-sonnet-4-20250514-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 grok-3-image 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 o4-mini-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-mini-2024-07-18 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4.1-mini-2025-04-14 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 4.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 4.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 text-embedding-3-small 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-08, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-08, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-sonnet-4-20250514-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-gemini-2.5-pro 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-flash-image-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.03, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-image-1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,789 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4.1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4.1-mini 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 4.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 4.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-sonnet-4-20250514 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-3.5-turbo-0613 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-mini-search-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-opus-4-20250514-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 grok-3-mini 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-32k-0613 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 Kimi-K2-Instruct 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-opus-4-1-20250805 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-flash-image 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_imagine 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3-mini-2025-01-31 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3-mini 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-3-5-sonnet-20241022 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-3-7-sonnet-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3-pro-2025-06-10 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 deepseek-ai/DeepSeek-R1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_variation 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 o4-mini-2025-04-16 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-mini 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-opus-4-1-20250805 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 chatgpt-4o-latest 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-mini-audio-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 qwen3-next-80b-a3b-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 Llama-4-Scout 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-thinking-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-nano 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-mini-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.02, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.02, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 grok-3-deepsearch 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj-chat 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4.1-nano 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-gpt-5 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-oss-20b 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-mini 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-08, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 tts-1-hd-1106 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-flash 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-pro-preview-03-25 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,790 - app.plugins.wolfai.plugin - WARNING - 解析模型 Kimi-K2-Instruct-0905 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-0613 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-32k 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-turbo-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_upscale 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 o4-mini 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-pro 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 DeepSeek-R1-0528 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 GLM-4.5 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-3.5-turbo 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 grok-4 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-audio-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-search-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-medium 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 swap_face 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.15, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.15, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 o1-mini-2024-09-12 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-3-7-sonnet-20250219-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-4-sonnet 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-2025-08-07 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_high_variation 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-all 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-pro-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-high 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-low 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_modal 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 text-embedding-ada-002 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 deepseek-v3 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-minimal 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-chat-2025-08-07 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.0-flash 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 deepseek-r1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-turbo-2024-04-09 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4.1-2025-04-14 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-chat-latest 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-gizmo-* 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-32k-0314 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3e-05, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-gemini-2.5-flash-deepsearch 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-grok-4 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.05, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,791 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-nano-2025-08-07 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-opus-4-20250514-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_reroll 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-chat 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-3-7-sonnet-20250219 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-flash-lite 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 6.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 Qwen/Qwen3-235B-A22B 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-opus-4-20250514 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_blend 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_uploads 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 whisper-1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_low_variation 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-3.5-turbo-0125 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4.1-nano-2025-04-14 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-turbo 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-4-sonnet-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-flash-lite-preview-06-17 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4.5-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3.75e-05,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3.75e-05,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 o3-deep-research 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_zoom 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_shorten 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-2024-08-06 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-2024-11-20 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-opus-4-1-20250805-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 GLM-4.5-Air 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3.75e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3.75e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-3.5-turbo-16k 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4-0314 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 mj_pan 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.12, 'ou...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-5-mini-2025-08-07 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-07,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 o1-2024-12-17 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 claude-3-7-sonnet 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-realtime-preview 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 o4-mini-deep-research 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-05, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-oss-120b 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 tts-1-1106 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 tts-1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-3-7-sonnet-20250219 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 qwq-32b 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 Llama-4-Maverick 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 2.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 2.0000000...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 cs-claude-opus-4-1-20250805-thinking 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.3, 'out...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-3.5-turbo-16k-0613 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.5e-06, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gemini-2.5-flash-deepsearch 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3e-06, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-audio-preview-2024-12-17 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 1.25e-06,...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-4o-mini-transcribe 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 7.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 7.5e-07, ...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 DeepSeek-V3.1 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 5e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 deepseek-ai/DeepSeek-V3 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 3e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 3e-07, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,792 - app.plugins.wolfai.plugin - WARNING - 解析模型 gpt-image-1-vip 时出错: 2 validation errors for TokenInfo
+input
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+output
+  Field required [type=missing, input_value={'input_price': 0.075, 'o...D', 'unit': '1K tokens'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+2025-09-13 17:21:08,793 - app.plugins.wolfai.plugin - INFO - 成功解析0个模型
+2025-09-13 17:21:08,793 - app.plugins.dmx.plugin - INFO - 正在请求 DMXAPI: https://www.dmxapi.cn/api/pricing
+2025-09-13 17:21:09,083 - app.plugins.dmx.plugin - INFO - 成功获取API数据
+2025-09-13 17:21:09,083 - app.plugins.dmx.plugin - INFO - 原始数据结构: ['data', 'message', 'success']
+2025-09-13 17:21:09,083 - app.plugins.dmx.plugin - INFO - 开始解析 548 个模型的定价数据
+2025-09-13 17:21:09,086 - app.plugins.dmx.plugin - INFO - 成功解析 414 个模型
+2025-09-13 17:21:09,086 - app.plugins.dmx.plugin - INFO - 获取到 414 个模型
+2025-09-13 17:21:09,087 - app.plugins.aihubmix.plugin - INFO - 正在请求 API: https://aihubmix.com/call/mdl_info
+2025-09-13 17:21:12,740 - app.plugins.aihubmix.plugin - INFO - 成功从 API 获取到 427 个模型数据
+2025-09-13 17:21:12,748 - app.plugins.aihubmix.plugin - INFO - 成功解析 427 个模型数据
+2025-09-13 17:21:12,752 - app.plugins.aihubmix.plugin - INFO - 成功获取 427 个模型，转换为ModelInfo对象
+2025-09-13 17:21:12,754 - app.plugins.zenmux.plugin - INFO - 🚀 开始获取ZenMux模型数据
+2025-09-13 17:21:12,754 - app.plugins.zenmux.plugin - INFO - 📡 使用API获取真实数据...
+2025-09-13 17:21:12,754 - app.plugins.zenmux.plugin - INFO - 正在调用ZenMux API (尝试 1/3)
+2025-09-13 17:21:14,520 - app.plugins.zenmux.plugin - INFO - ✅ API调用成功，获取到 34 个模型
+2025-09-13 17:21:14,527 - app.plugins.zenmux.plugin - INFO - 📊 获取到 34 条原始数据，开始转换格式...
+2025-09-13 17:21:14,528 - app.plugins.zenmux.plugin - INFO - 成功转换 34 个模型数据
+2025-09-13 17:21:14,529 - app.plugins.zenmux.plugin - INFO - 📈 数据获取完成:
+2025-09-13 17:21:14,529 - app.plugins.zenmux.plugin - INFO -    ✅ 成功转换: 34 个模型
+2025-09-13 17:21:14,530 - app.plugins.zenmux.plugin - INFO -    ❌ 转换失败: 0 个模型
+2025-09-13 17:21:14,530 - app.plugins.zenmux.plugin - INFO -    ⏱️ 总耗时: 1.78 秒
+2025-09-13 17:21:14,530 - app.plugins.zenmux.plugin - INFO - 🎉 成功获取 34 个有效模型
+2025-09-13 17:21:14,530 - app.plugins.zenmux.plugin - INFO - 📋 涉及品牌: 
+2025-09-13 17:21:14,530 - app.plugins.zenmux.plugin - INFO - 🔧 资源清理完成

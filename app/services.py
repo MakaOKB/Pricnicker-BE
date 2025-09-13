@@ -1,9 +1,14 @@
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from .models import ModelInfo, ProviderInfo
 from .plugins.loader import PluginLoader
 from .plugins.base import BasePlugin
+from .cache_manager import cache_manager
 import difflib
+import logging
 from collections import defaultdict
+
+# 配置日志
+logger = logging.getLogger(__name__)
 
 
 class ModelService:
@@ -246,6 +251,17 @@ class ModelService:
         Returns:
             List[ModelInfo]: 所有模型信息的合并列表（包含提供商信息）
         """
+        # 尝试从缓存获取数据
+        cache_key = "models_fuzzy" if enable_fuzzy_matching else "models_no_fuzzy"
+        cached_data = cache_manager.get_cached_data(cache_key)
+        
+        if cached_data is not None:
+            logger.info(f"从缓存加载模型数据，共{len(cached_data)}条记录")
+            # 将缓存数据转换为ModelInfo对象
+            return [self._dict_to_model_info(model_dict) for model_dict in cached_data]
+        
+        logger.info("缓存无效，从插件获取最新数据")
+        
         # 确保插件已加载
         await self._ensure_plugins_loaded()
         
@@ -265,17 +281,136 @@ class ModelService:
                 all_models.extend(models)
             except Exception as e:
                 # 记录错误但不中断其他插件的执行
-                print(f"Error getting models from plugin {plugin_name}: {e}")
+                logger.error(f"Error getting models from plugin {plugin_name}: {e}")
                 continue
         
         # 应用模糊匹配逻辑
         if enable_fuzzy_matching and all_models:
-            print(f"应用模糊匹配前: {len(all_models)} 个模型")
+            logger.info(f"应用模糊匹配前: {len(all_models)} 个模型")
             all_models = self._merge_similar_models(all_models)
-            print(f"应用模糊匹配后: {len(all_models)} 个模型")
+            logger.info(f"应用模糊匹配后: {len(all_models)} 个模型")
+        
+        # 缓存数据
+        if all_models:
+            model_dicts = [self._model_info_to_dict(model) for model in all_models]
+            cache_manager.save_cached_data(model_dicts, cache_key)
+            logger.info(f"模型数据已缓存，共{len(all_models)}条记录")
         
         return all_models
     
+    def _model_info_to_dict(self, model: ModelInfo) -> Dict[str, Any]:
+        """将ModelInfo对象转换为字典
+        
+        Args:
+            model: ModelInfo对象
+            
+        Returns:
+            Dict: 模型信息字典
+        """
+        return {
+            "brand": model.brand,
+            "name": model.name,
+            "data_amount": model.data_amount,
+            "window": model.window,
+            "providers": [
+                {
+                    "name": provider.name,
+                    "display_name": provider.display_name,
+                    "api_website": provider.api_website,
+                    "full_name": provider.full_name,
+                    "tokens": {
+                        "input": provider.tokens.input,
+                        "output": provider.tokens.output,
+                        "unit": provider.tokens.unit
+                    }
+                } for provider in model.providers
+            ],
+            "recommended_provider": model.recommended_provider
+        }
+    
+    def _dict_to_model_info(self, model_dict: Dict[str, Any]) -> ModelInfo:
+        """将字典转换为ModelInfo对象
+        
+        Args:
+            model_dict: 模型信息字典
+            
+        Returns:
+            ModelInfo: ModelInfo对象
+        """
+        from .models import TokenInfo  # 避免循环导入
+        
+        providers = []
+        for provider_dict in model_dict.get("providers", []):
+            tokens = TokenInfo(
+                input=provider_dict["tokens"]["input"],
+                output=provider_dict["tokens"]["output"],
+                unit=provider_dict["tokens"]["unit"]
+            )
+            
+            provider = ProviderInfo(
+                name=provider_dict["name"],
+                display_name=provider_dict["display_name"],
+                api_website=provider_dict["api_website"],
+                full_name=provider_dict["full_name"],
+                tokens=tokens
+            )
+            providers.append(provider)
+        
+        return ModelInfo(
+            brand=model_dict["brand"],
+            name=model_dict["name"],
+            data_amount=model_dict["data_amount"],
+            window=model_dict["window"],
+            providers=providers,
+            recommended_provider=model_dict.get("recommended_provider")
+        )
+     
+    def _provider_info_to_dict(self, provider: ProviderInfo) -> Dict[str, Any]:
+        """将ProviderInfo对象转换为字典
+        
+        Args:
+            provider: ProviderInfo对象
+            
+        Returns:
+            Dict: 提供商信息字典
+        """
+        return {
+            "name": provider.name,
+            "display_name": provider.display_name,
+            "api_website": provider.api_website,
+            "full_name": provider.full_name,
+            "tokens": {
+                "input": provider.tokens.input,
+                "output": provider.tokens.output,
+                "unit": provider.tokens.unit
+            }
+        }
+    
+    def _dict_to_provider_info(self, provider_dict: Dict[str, Any]) -> ProviderInfo:
+        """将字典转换为ProviderInfo对象
+        
+        Args:
+            provider_dict: 提供商信息字典
+            
+        Returns:
+            ProviderInfo: ProviderInfo对象
+        """
+        from .models import TokenInfo  # 避免循环导入
+        
+        tokens = TokenInfo(
+            input=provider_dict["tokens"]["input"],
+            output=provider_dict["tokens"]["output"],
+            unit=provider_dict["tokens"]["unit"]
+        )
+        
+        return ProviderInfo(
+            name=provider_dict["name"],
+            display_name=provider_dict["display_name"],
+            api_website=provider_dict["api_website"],
+            full_name=provider_dict["full_name"],
+            tokens=tokens
+        )
+     
     async def get_brands(self) -> List[str]:
         """获取所有可用的品牌列表
         
@@ -420,6 +555,16 @@ class ModelService:
         Returns:
             List[ProviderInfo]: 所有提供商的信息列表
         """
+        # 尝试从缓存获取数据
+        cached_data = cache_manager.get_cached_data("providers")
+        
+        if cached_data is not None:
+            logger.info(f"从缓存加载提供商数据，共{len(cached_data)}条记录")
+            # 将缓存数据转换为ProviderInfo对象
+            return [self._dict_to_provider_info(provider_dict) for provider_dict in cached_data]
+        
+        logger.info("缓存无效，从插件获取最新提供商数据")
+        
         await self._ensure_plugins_loaded()
         
         providers = []
@@ -476,8 +621,14 @@ class ModelService:
                         )
                         providers.append(provider_info)
                 except Exception as e:
-                    print(f"Error loading provider info for {plugin_name}: {e}")
+                    logger.error(f"Error loading provider info for {plugin_name}: {e}")
                     continue
+        
+        # 缓存数据
+        if providers:
+            provider_dicts = [self._provider_info_to_dict(provider) for provider in providers]
+            cache_manager.save_cached_data(provider_dicts, "providers")
+            logger.info(f"提供商数据已缓存，共{len(providers)}条记录")
         
         return providers
     
