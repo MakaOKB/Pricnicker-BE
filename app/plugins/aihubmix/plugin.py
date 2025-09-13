@@ -45,6 +45,7 @@ class AihubmixPlugin(BasePlugin):
             'wait_time': 5,
             'headless': True
         }
+        self._models_cache = None  # 添加缓存机制
         logger.info("AIHubMix插件初始化完成")
     
     def _setup_driver(self) -> webdriver.Chrome:
@@ -420,20 +421,20 @@ class AihubmixPlugin(BasePlugin):
                 self.driver.quit()
                 logger.info("WebDriver已关闭")
     
-    def get_brands(self) -> List[str]:
+    async def get_brands(self) -> List[str]:
         """
         获取所有品牌列表，基于新的数据格式
         
         Returns:
             List[str]: 品牌名称列表
         """
-        models = self.get_models()
-        brands = list(set(model.get('brand', '') for model in models if model.get('brand')))
+        models = await self.get_models()
+        brands = list(set(model.brand for model in models if model.brand))
         brands.sort()
         logger.info(f"获取到 {len(brands)} 个品牌: {brands}")
         return brands
     
-    def get_model_by_name(self, model_name: str) -> Optional[Dict]:
+    async def get_model_by_name(self, model_name: str) -> Optional[ModelInfo]:
         """
         根据模型名称获取特定模型信息
         
@@ -441,11 +442,11 @@ class AihubmixPlugin(BasePlugin):
             model_name: 模型名称
             
         Returns:
-            Optional[Dict]: 模型信息，未找到时返回None
+            Optional[ModelInfo]: 模型信息，未找到时返回None
         """
-        models = self.get_models()
+        models = await self.get_models()
         for model in models:
-            if model.get('name') == model_name or model.get('model_name') == model_name:
+            if model.name == model_name:
                 logger.info(f"找到模型: {model_name}")
                 return model
         

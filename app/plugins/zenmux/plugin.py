@@ -4,10 +4,18 @@
 ZenMux 模型价格爬虫插件
 
 该插件从 zenmux.ai 获取AI模型的价格信息。
-结合 requests + beautifulsoup4 和 Puppeteer 处理动态内容。
+使用 API 接口获取数据，提供备用的静态数据作为降级方案。
+
+功能特性:
+- 通过 API 接口获取实时模型数据
+- 支持多种 AI 模型品牌（Anthropic、OpenAI、Google 等）
+- 自动解析价格、上下文窗口等信息
+- 符合 editv3.json 接口规范
+- 包含配置验证和错误处理
 
 作者: Assistant
-版本: 1.0
+版本: 2.0
+最后更新: 2025-01-13
 """
 
 import json
@@ -16,13 +24,6 @@ import logging
 import re
 import requests
 from typing import Dict, List, Optional
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
 from requests.exceptions import RequestException, Timeout, ConnectionError
 
 # 配置日志
@@ -40,20 +41,45 @@ class ZenMuxPlugin:
     """
     ZenMux 价格爬虫插件
     
-    从 zenmux.ai/models 获取AI模型价格信息
+    从 zenmux.ai 获取AI模型的价格信息，支持多种AI模型品牌。
+    
+    主要功能:
+    - 通过 API 接口获取实时模型数据
+    - 解析模型价格、上下文窗口等信息
+    - 提供品牌列表和模型查询功能
+    - 数据格式符合 editv3.json 规范
+    
+    支持的品牌:
+    - Anthropic (Claude 系列)
+    - OpenAI (GPT 系列)
+    - Google (Gemini 系列)
+    - DeepSeek
+    - MoonshotAI
+    - Qwen
+    - Z.AI
+    
+    Attributes:
+        base_url (str): ZenMux 基础 URL
+        models_url (str): 模型页面 URL
+        session (requests.Session): HTTP 会话对象
+        config (dict): 插件配置参数
     """
+    
+    # 类常量
+    BASE_URL = "https://zenmux.ai"
+    MODELS_URL = "https://zenmux.ai/models"
+    API_URL = "https://zenmux.ai/api/frontend/model/listByFilter"
+    DEFAULT_CTOKEN = "173hyG0fqu47kxXs6LWw2OBy"
+    DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     
     def __init__(self):
         """初始化插件"""
-        self.base_url = "https://zenmux.ai"
-        self.models_url = "https://zenmux.ai/models"
-        self.driver = None
+        self.base_url = self.BASE_URL
+        self.models_url = self.MODELS_URL
         self.session = requests.Session()
         self.config = {
             'timeout': 30,
-            'wait_time': 5,
-            'headless': True,
-            'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            'user_agent': self.DEFAULT_USER_AGENT
         }
         
         # 设置请求头
@@ -68,168 +94,32 @@ class ZenMuxPlugin:
         
         logger.info("ZenMux插件初始化完成")
     
-    def _setup_driver(self) -> webdriver.Chrome:
-        """
-        设置Chrome WebDriver
-        
-        Returns:
-            webdriver.Chrome: 配置好的Chrome驱动
-        """
-        try:
-            chrome_options = Options()
-            if self.config['headless']:
-                chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--disable-dev-shm-usage')
-            chrome_options.add_argument('--disable-gpu')
-            chrome_options.add_argument('--window-size=1920,1080')
-            chrome_options.add_argument(f'--user-agent={self.config["user_agent"]}')
-            
-            driver = webdriver.Chrome(options=chrome_options)
-            driver.set_page_load_timeout(self.config['timeout'])
-            return driver
-        except Exception as e:
-            logger.error(f"设置Chrome驱动失败: {e}")
-            raise
+
     
-    def _get_page_with_requests(self, url: str) -> Optional[BeautifulSoup]:
-        """
-        使用requests获取页面内容
-        
-        Args:
-            url: 目标URL
-            
-        Returns:
-            BeautifulSoup: 解析后的页面对象
-        """
-        max_retries = 3
-        retry_delay = 2
-        
-        for attempt in range(max_retries):
-            try:
-                logger.info(f"使用requests获取页面: {url} (尝试 {attempt + 1}/{max_retries})")
-                response = self.session.get(url, timeout=self.config['timeout'])
-                response.raise_for_status()
-                
-                if response.status_code == 200:
-                    soup = BeautifulSoup(response.content, 'html.parser')
-                    logger.info(f"页面获取成功，内容长度: {len(response.content)} 字节")
-                    return soup
-                else:
-                    logger.warning(f"页面返回状态码: {response.status_code}")
-                    
-            except Timeout as e:
-                logger.warning(f"请求超时 (尝试 {attempt + 1}/{max_retries}): {e}")
-            except ConnectionError as e:
-                logger.warning(f"连接错误 (尝试 {attempt + 1}/{max_retries}): {e}")
-            except RequestException as e:
-                logger.warning(f"请求异常 (尝试 {attempt + 1}/{max_retries}): {e}")
-            except Exception as e:
-                logger.error(f"未知错误 (尝试 {attempt + 1}/{max_retries}): {e}")
-            
-            if attempt < max_retries - 1:
-                logger.info(f"等待 {retry_delay} 秒后重试...")
-                time.sleep(retry_delay)
-                retry_delay *= 2  # 指数退避
-        
-        logger.error(f"所有重试均失败，无法获取页面: {url}")
-        return None
-    
-    def _get_dynamic_data_with_selenium(self) -> Optional[List[Dict]]:
-        """
-        使用 Selenium 获取动态加载的数据
-        
-        Returns:
-            List[Dict]: 模型数据列表，失败时返回None
-        """
-        max_retries = 2
-        
-        for attempt in range(max_retries):
-            try:
-                logger.info(f"启动Selenium WebDriver (尝试 {attempt + 1}/{max_retries})")
-                
-                if not self.driver:
-                    self.driver = self._setup_driver()
-                
-                logger.info(f"使用Selenium访问: {self.models_url}")
-                self.driver.get(self.models_url)
-                
-                # 等待页面加载
-                logger.info(f"等待页面加载 {self.config['wait_time']} 秒")
-                time.sleep(self.config['wait_time'])
-                
-                # 检查页面是否正确加载
-                if "zenmux" not in self.driver.title.lower():
-                    logger.warning(f"页面标题异常: {self.driver.title}")
-                
-                # 等待表格或数据容器加载
-                wait = WebDriverWait(self.driver, self.config['timeout'])
-                
-                # 尝试多种可能的选择器
-                selectors_to_try = [
-                    '.ant-table-tbody tr',
-                    '[class*="model"]',
-                    '[class*="card"]',
-                    '.model-item',
-                    '.model-card'
-                ]
-                
-                elements = []
-                for selector in selectors_to_try:
-                    try:
-                        elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
-                        if elements:
-                            logger.info(f"找到 {len(elements)} 个元素，使用选择器: {selector}")
-                            break
-                    except Exception as e:
-                        logger.debug(f"选择器 {selector} 未找到元素: {e}")
-                        continue
-                
-                if not elements:
-                    logger.warning("未找到页面元素，尝试使用API获取数据")
-                
-                # 提取数据 - 优先使用API
-                data = self._get_models_from_api()
-                if data:
-                    logger.info(f"成功提取到 {len(data)} 条数据")
-                    return data
-                else:
-                    logger.warning("API获取失败，使用备用数据")
-                    return self._get_models_from_web_search_fallback()
-                
-            except TimeoutException as e:
-                logger.error(f"页面加载超时 (尝试 {attempt + 1}/{max_retries}): {e}")
-            except WebDriverException as e:
-                logger.error(f"WebDriver异常 (尝试 {attempt + 1}/{max_retries}): {e}")
-            except Exception as e:
-                logger.error(f"Selenium获取数据失败 (尝试 {attempt + 1}/{max_retries}): {e}")
-            finally:
-                # 确保浏览器被关闭
-                if self.driver:
-                    try:
-                        self.driver.quit()
-                        self.driver = None
-                        logger.info("浏览器已关闭")
-                    except Exception as e:
-                        logger.warning(f"关闭浏览器时出错: {e}")
-            
-            if attempt < max_retries - 1:
-                logger.info("等待 3 秒后重试...")
-                time.sleep(3)
-        
-        logger.error("所有Selenium尝试均失败")
-        return None
+
     
     def _get_models_from_api(self) -> Optional[List[Dict]]:
         """
         通过ZenMux API获取真实的模型数据
         
+        使用 ZenMux 官方 API 接口获取最新的模型数据，包括价格、上下文窗口、
+        使用量等信息。支持重试机制和指数退避策略。
+        
+        API 参数:
+        - ctoken: 客户端令牌
+        - sort: 排序方式 (topweekly)
+        - keyword: 搜索关键词
+        
         Returns:
-            List[Dict]: 模型数据列表
+            Optional[List[Dict]]: 成功时返回模型数据列表，失败时返回 None
+            
+        Raises:
+            requests.RequestException: 网络请求异常
+            json.JSONDecodeError: JSON 解析异常
         """
-        api_url = "https://zenmux.ai/api/frontend/model/listByFilter"
+        api_url = self.API_URL
         params = {
-            'ctoken': '173hyG0fqu47kxXs6LWw2OBy',
+            'ctoken': self.DEFAULT_CTOKEN,
             'sort': 'topweekly',
             'keyword': ''
         }
@@ -245,10 +135,10 @@ class ZenMuxPlugin:
                     params=params,
                     timeout=self.config['timeout'],
                     headers={
-                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'User-Agent': self.DEFAULT_USER_AGENT,
                         'Accept': 'application/json, text/plain, */*',
                         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                        'Referer': 'https://zenmux.ai/models'
+                        'Referer': self.models_url
                     }
                 )
                 
@@ -295,6 +185,58 @@ class ZenMuxPlugin:
         logger.error("所有API调用尝试均失败")
         return None
     
+    def _parse_brand_and_name(self, name: str, author: str) -> tuple[str, str]:
+        """
+        解析品牌和模型名称
+        
+        从 API 返回的 name 和 author 字段中提取标准化的品牌名称和模型名称。
+        支持多种格式的输入，包括 "brand:model" 格式和独立的品牌/模型字段。
+        
+        品牌映射规则:
+        - anthropic -> Anthropic
+        - openai -> OpenAI
+        - google -> Google
+        - deepseek -> DeepSeek
+        - moonshot -> MoonshotAI
+        - qwen -> Qwen
+        - z.ai -> Z.AI
+        
+        Args:
+            name (str): 模型名称，可能包含品牌前缀
+            author (str): 作者信息，用于确定品牌
+            
+        Returns:
+            tuple[str, str]: (标准化品牌名称, 模型名称)
+            
+        Examples:
+            >>> _parse_brand_and_name("anthropic:claude-3-sonnet", "anthropic")
+            ("Anthropic", "claude-3-sonnet")
+            >>> _parse_brand_and_name("GPT-4", "openai")
+            ("OpenAI", "GPT-4")
+        """
+        # 品牌映射表
+        brand_mapping = {
+            'anthropic': 'Anthropic',
+            'openai': 'OpenAI', 
+            'google': 'Google',
+            'deepseek': 'DeepSeek',
+            'moonshot': 'MoonshotAI',
+            'qwen': 'Qwen',
+            'z.ai': 'Z.AI'
+        }
+        
+        # 从name字段提取品牌和模型名
+        if ':' in name:
+            brand_part, model_name = name.split(':', 1)
+            brand = brand_part.strip()
+            model_name = model_name.strip()
+        else:
+            # 根据author字段确定品牌
+            brand = brand_mapping.get(author.lower(), author.title())
+            model_name = name
+            
+        return brand, model_name
+    
     def _convert_api_models_to_internal_format(self, api_models: List[Dict]) -> List[Dict]:
         """
         将API返回的模型数据转换为内部格式
@@ -309,26 +251,10 @@ class ZenMuxPlugin:
         
         for model in api_models:
             try:
-                # 解析品牌名称
+                # 解析品牌名称和模型名
                 name = model.get('name', '')
                 author = model.get('author', '')
-                
-                # 从name字段提取品牌和模型名
-                if ':' in name:
-                    brand_part, model_name = name.split(':', 1)
-                    brand = brand_part.strip()
-                    model_name = model_name.strip()
-                else:
-                    # 根据author字段确定品牌
-                    brand_mapping = {
-                        'anthropic': 'Anthropic',
-                        'openai': 'OpenAI', 
-                        'google': 'Google',
-                        'deepseek': 'DeepSeek',
-                        'moonshot': 'MoonshotAI'
-                    }
-                    brand = brand_mapping.get(author.lower(), author.title())
-                    model_name = name
+                brand, model_name = self._parse_brand_and_name(name, author)
                 
                 # 解析价格信息
                 input_price = float(model.get('pricing_prompt', 0))
@@ -642,38 +568,7 @@ class ZenMuxPlugin:
             logger.error(f"获取模型数据失败: {e}")
             return []
     
-    def _parse_element_data(self, element) -> Optional[Dict]:
-        """
-        解析单个元素的模型数据
-        
-        Args:
-            element: Selenium WebElement
-            
-        Returns:
-            Dict: 模型信息字典
-        """
-        try:
-            text = element.text.strip()
-            if not text:
-                return None
-            
-            # 这里需要根据实际页面结构来解析
-            # 由于页面是动态加载的，我们使用通用的解析逻辑
-            model_info = {
-                'raw_text': text,
-                'name': 'Unknown',
-                'brand': 'Unknown',
-                'input_price': 0.0,
-                'output_price': 0.0,
-                'currency': 'USD',
-                'unit': 'M tokens'
-            }
-            
-            return model_info
-            
-        except Exception as e:
-            logger.warning(f"解析元素数据失败: {e}")
-            return None
+
     
     def _validate_model_data(self, model_data: Dict) -> bool:
         """
@@ -728,11 +623,25 @@ class ZenMuxPlugin:
             bool: 数据是否有效
         """
         try:
-            # 检查基本结构
+            # 检查基本结构 - v4.json规范
             required_fields = ['brand', 'name', 'window', 'tokens', 'providers']
             for field in required_fields:
                 if field not in model_info:
                     logger.debug(f"转换后数据缺少字段: {field}")
+                    return False
+            
+            # 检查可选字段
+            if 'data_amount' in model_info:
+                data_amount = model_info['data_amount']
+                if data_amount is not None and not isinstance(data_amount, int):
+                    logger.debug(f"data_amount字段类型错误，应为int或null: {type(data_amount)}")
+                    return False
+            
+            # 检查recommended_provider字段
+            if 'recommended_provider' in model_info:
+                recommended_provider = model_info['recommended_provider']
+                if recommended_provider is not None and not isinstance(recommended_provider, str):
+                    logger.debug(f"recommended_provider字段类型错误，应为str或null: {type(recommended_provider)}")
                     return False
             
             # 检查tokens结构
@@ -824,8 +733,38 @@ class ZenMuxPlugin:
         """
         获取所有模型信息
         
+        这是插件的主要接口方法，负责获取、转换和验证所有模型数据。
+        首先尝试通过 API 获取实时数据，如果失败则使用备用数据。
+        
+        处理流程:
+        1. 调用 API 获取原始数据
+        2. 数据验证和清洗
+        3. 格式转换为 v4.json 规范
+        4. 二次验证转换后的数据
+        5. 返回有效的模型列表
+        
+        数据格式 (v4.json):
+        {
+            "brand": "品牌名称",
+            "name": "模型名称", 
+            "data_amount": 训练数据量(整数或null),
+            "window": 上下文窗口大小(整数),
+            "tokens": {
+                "input": 输入价格(浮点数),
+                "output": 输出价格(浮点数),
+                "unit": "价格单位"
+            },
+            "providers": [提供商信息列表],
+            "recommended_provider": "推荐提供商"
+        }
+        
         Returns:
-            List[Dict]: 模型信息列表，符合editv3.json格式
+            List[Dict]: 模型信息列表，符合 v4.json 格式规范
+            
+        Note:
+            - 所有价格以 USD 为单位，按每百万 tokens 计费
+            - 上下文窗口大小为 token 数量的整数值
+            - 如果获取失败，返回空列表而不是抛出异常
         """
         start_time = time.time()
         models = []
@@ -859,17 +798,44 @@ class ZenMuxPlugin:
                         failed_conversions += 1
                         continue
                     
+                    # 解析数据量，确保类型为int或null
+                    data_amount = model_data.get('tokens_used', None)
+                    if data_amount is not None:
+                        if isinstance(data_amount, str):
+                            if data_amount.isdigit():
+                                data_amount = int(data_amount)
+                            elif data_amount in ['N/A', 'Unknown', '', 'null', 'None']:
+                                data_amount = None
+                            else:
+                                # 尝试解析包含单位的字符串（如"1.2M"）
+                                try:
+                                    # 移除非数字字符并转换
+                                    clean_str = re.sub(r'[^0-9.]', '', data_amount)
+                                    if clean_str:
+                                        data_amount = int(float(clean_str))
+                                    else:
+                                        data_amount = None
+                                except (ValueError, TypeError):
+                                    data_amount = None
+                        elif not isinstance(data_amount, int):
+                            # 如果不是字符串也不是整数，尝试转换
+                            try:
+                                data_amount = int(data_amount)
+                            except (ValueError, TypeError):
+                                data_amount = None
+                    
                     model_info = {
                         'brand': model_data.get('brand', 'Unknown'),
                         'name': model_data.get('name', 'Unknown'),
+                        'data_amount': data_amount,
                         'window': self._parse_context_length(model_data.get('context_window', '4K')),
-                        'data_amount': model_data.get('tokens_used', 'N/A'),
                         'tokens': {
                             'input': float(model_data.get('input_price', 0.0)),
                             'output': float(model_data.get('output_price', 0.0)),
                             'unit': model_data.get('currency', 'USD')
                         },
-                        'providers': [self._create_provider_info(model_data)]
+                        'providers': [self._create_provider_info(model_data)],
+                        'recommended_provider': 'zenmux'
                     }
                     
                     # 验证转换后的数据
@@ -915,20 +881,28 @@ class ZenMuxPlugin:
             return []
         finally:
             # 确保资源清理
-            if self.driver:
-                try:
-                    self.driver.quit()
-                    self.driver = None
-                    logger.info("🔧 浏览器资源已清理")
-                except Exception as e:
-                    logger.warning(f"⚠️ 清理浏览器资源时出错: {e}")
+            logger.info("🔧 资源清理完成")
     
     def get_brands(self) -> List[str]:
         """
         获取支持的品牌列表
         
+        从当前可用的模型数据中提取所有唯一的品牌名称，
+        返回按字母顺序排序的品牌列表。
+        
+        该方法会调用 get_models() 获取完整的模型数据，
+        然后提取并去重所有品牌信息。
+        
         Returns:
-            List[str]: 品牌名称列表
+            List[str]: 按字母顺序排序的品牌名称列表
+            
+        Examples:
+            >>> plugin.get_brands()
+            ['Anthropic', 'DeepSeek', 'Google', 'MoonshotAI', 'OpenAI', 'Qwen']
+            
+        Note:
+            - 过滤掉空字符串和 'Unknown' 品牌
+            - 如果没有可用模型，返回空列表
         """
         try:
             logger.info("🏷️ 开始获取品牌列表...")
@@ -975,10 +949,27 @@ class ZenMuxPlugin:
     
     def validate_config(self) -> bool:
         """
-        验证插件配置
+        验证插件配置和网络连接
+        
+        执行全面的配置验证，包括参数检查、URL 格式验证、
+        网络连接测试和 API 可用性测试。
+        
+        验证项目:
+        1. 必需配置参数检查 (timeout, user_agent)
+        2. URL 格式验证 (base_url, models_url)
+        3. 网络连接测试 (访问主站)
+        4. API 连接测试 (测试 API 端点)
         
         Returns:
-            bool: 配置是否有效
+            bool: 所有验证项通过时返回 True，否则返回 False
+            
+        Side Effects:
+            - 在日志中记录详细的验证过程和结果
+            - 网络测试可能需要几秒钟时间
+            
+        Note:
+            - 建议在使用插件前调用此方法进行预检查
+            - 验证失败时会在日志中输出具体的错误信息
         """
         validation_errors = []
         
@@ -986,7 +977,7 @@ class ZenMuxPlugin:
             logger.info("开始配置验证...")
             
             # 1. 验证基本配置参数
-            required_configs = ['timeout', 'wait_time', 'headless', 'user_agent']
+            required_configs = ['timeout', 'user_agent']
             for config_key in required_configs:
                 if config_key not in self.config:
                     validation_errors.append(f"缺少必需配置: {config_key}")
@@ -1015,24 +1006,21 @@ class ZenMuxPlugin:
             except RequestException as e:
                 validation_errors.append(f"网络请求异常: {e}")
             
-            # 4. 测试Chrome WebDriver
+            # 4. 测试API连接
             try:
-                logger.info("测试Chrome WebDriver...")
-                chrome_options = Options()
-                chrome_options.add_argument('--headless')
-                chrome_options.add_argument('--no-sandbox')
-                chrome_options.add_argument('--disable-dev-shm-usage')
-                chrome_options.add_argument('--disable-gpu')
-                
-                test_driver = webdriver.Chrome(options=chrome_options)
-                test_driver.get('about:blank')  # 简单测试
-                test_driver.quit()
-                logger.info("Chrome WebDriver测试通过")
-                
-            except WebDriverException as e:
-                validation_errors.append(f"Chrome WebDriver不可用: {e}")
+                logger.info("测试API连接...")
+                test_params = {
+                    'ctoken': self.DEFAULT_CTOKEN,
+                    'sort': 'topweekly',
+                    'keyword': ''
+                }
+                response = self.session.get(self.API_URL, params=test_params, timeout=15)
+                if response.status_code == 200:
+                    logger.info("API连接测试通过")
+                else:
+                    validation_errors.append(f"API连接异常，状态码: {response.status_code}")
             except Exception as e:
-                validation_errors.append(f"WebDriver测试失败: {e}")
+                validation_errors.append(f"API连接测试失败: {e}")
             
             # 5. 输出验证结果
             if validation_errors:
@@ -1053,7 +1041,7 @@ if __name__ == "__main__":
     
     # 验证配置
     if not plugin.validate_config():
-        print("配置验证失败，请检查网络连接和Chrome WebDriver")
+        print("配置验证失败，请检查网络连接和API访问")
         exit(1)
     
     print("开始获取ZenMux模型数据...")
@@ -1064,7 +1052,7 @@ if __name__ == "__main__":
     
     # 显示前5个模型的详细信息
     if models:
-        print("\n前5个模型详细信息（editv3.json格式）:")
+        print("\n前5个模型详细信息（v4.json格式）:")
         for i, model in enumerate(models[:5]):
             print(f"\n{i+1}. {model.get('name', 'N/A')}")
             print(f"   品牌: {model.get('brand', 'N/A')}")
@@ -1093,6 +1081,6 @@ if __name__ == "__main__":
         print(f"✓ ModelInfo格式: 包含 brand, name, window, providers 字段")
         print(f"✓ ProviderInfo格式: 包含 name, display_name, api_website, tokens 字段")
         print(f"✓ TokenInfo格式: 包含 input, output, unit 字段")
-        print(f"✓ 符合editv3.json接口规范")
+        print(f"✓ 符合v4.json接口规范")
     
     print("\n测试完成！")

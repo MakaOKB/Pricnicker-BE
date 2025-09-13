@@ -71,14 +71,9 @@ class ModelService:
                 provider_info = await self.get_provider_by_name(plugin_name)
                 if provider_info:
                     for model in models:
-                        # 获取该模型的所有提供商
-                        all_providers = await self.get_providers_for_model(model.name)
-                        model.providers = all_providers if all_providers else [provider_info]
-                        # 设置推荐提供商（当前提供商或评分最高的）
-                        if all_providers:
-                            model.recommended_provider = all_providers[0].name
-                        else:
-                            model.recommended_provider = plugin_name
+                        # 直接设置当前提供商信息，避免循环调用
+                        model.providers = [provider_info]
+                        model.recommended_provider = plugin_name
                 
                 all_models.extend(models)
             except Exception as e:

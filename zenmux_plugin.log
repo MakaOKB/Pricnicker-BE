@@ -1,0 +1,29 @@
+2025-09-13 13:30:51,736 - app.plugins.zenmux.plugin - INFO - ZenMux插件初始化完成
+2025-09-13 13:30:51,736 - app.plugins.zenmux.plugin - INFO - 🚀 开始获取ZenMux模型数据
+2025-09-13 13:30:51,736 - app.plugins.zenmux.plugin - INFO - 📡 尝试使用API获取数据...
+2025-09-13 13:30:51,736 - app.plugins.zenmux.plugin - INFO - 正在调用ZenMux API (尝试 1/3)
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO - ✅ API调用成功，获取到 34 个模型
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO - 成功转换 34 个模型数据
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO - 📊 获取到 34 条原始数据，开始转换格式...
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO - 📈 数据获取完成:
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO -    ✅ 成功转换: 34 个模型
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO -    ❌ 转换失败: 0 个模型
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO -    ⏱️ 总耗时: 2.15 秒
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO - 🎉 成功获取 34 个有效模型
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO - 📋 涉及品牌: Anthropic, DeepSeek, Google, MoonshotAI, OpenAI, Qwen, Z.AI
+2025-09-13 13:30:53,885 - app.plugins.zenmux.plugin - INFO - 🔧 资源清理完成
+2025-09-13 13:30:53,886 - app.plugins.zenmux.plugin - INFO - 🏷️ 开始获取品牌列表...
+2025-09-13 13:30:53,886 - app.plugins.zenmux.plugin - INFO - 🚀 开始获取ZenMux模型数据
+2025-09-13 13:30:53,886 - app.plugins.zenmux.plugin - INFO - 📡 尝试使用API获取数据...
+2025-09-13 13:30:53,886 - app.plugins.zenmux.plugin - INFO - 正在调用ZenMux API (尝试 1/3)
+2025-09-13 13:30:56,118 - app.plugins.zenmux.plugin - INFO - ✅ API调用成功，获取到 34 个模型
+2025-09-13 13:30:56,118 - app.plugins.zenmux.plugin - INFO - 成功转换 34 个模型数据
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO - 📊 获取到 34 条原始数据，开始转换格式...
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO - 📈 数据获取完成:
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO -    ✅ 成功转换: 34 个模型
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO -    ❌ 转换失败: 0 个模型
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO -    ⏱️ 总耗时: 2.23 秒
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO - 🎉 成功获取 34 个有效模型
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO - 📋 涉及品牌: Anthropic, DeepSeek, Google, MoonshotAI, OpenAI, Qwen, Z.AI
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO - 🔧 资源清理完成
+2025-09-13 13:30:56,119 - app.plugins.zenmux.plugin - INFO - ✅ 成功获取 7 个品牌: Anthropic, DeepSeek, Google, MoonshotAI, OpenAI, Qwen, Z.AI

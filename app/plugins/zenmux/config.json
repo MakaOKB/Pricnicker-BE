@@ -1,48 +1,52 @@
 {
-    "name": "aihubmix",
-    "version": "1.0.0",
-    "description": "AiHubMix模型聚合平台插件，提供多种AI模型的价格信息",
-    "author": "Your Name",
-    "brand_name": "AiHubMix",
+    "name": "zenmux",
+    "version": "2.0.0",
+    "description": "ZenMux AI模型价格查询插件，从zenmux.ai获取多种AI模型的价格信息",
+    "author": "Assistant",
+    "brand_name": "ZenMux",
     "enabled": true,
     "api_config": {
-        "base_url": "https://aihubmix.com",
+        "base_url": "https://zenmux.ai",
         "api_key_required": false,
         "rate_limit": 60
     },
     "provider_info": {
-        "website": "https://aihubmix.com",
-        "support_email": "support@aihubmix.com",
-        "documentation": "https://aihubmix.com/docs"
+        "website": "https://zenmux.ai",
+        "support_email": "support@zenmux.ai",
+        "documentation": "https://zenmux.ai/docs"
     },
     "extra_config": {
-        "base_url": "https://aihubmix.com",
+        "base_url": "https://zenmux.ai",
         "supported_brands": [
-            "DeepSeek",
-            "OpenAI",
             "Anthropic",
-            "Google"
+            "OpenAI",
+            "Google",
+            "Meta",
+            "Mistral",
+            "Cohere",
+            "DeepSeek",
+            "Qwen"
         ],
         "default_currency": "USD",
         "pricing_update_interval": 3600,
         "cache_ttl": 1800,
         "timeout": 30,
         "retry_attempts": 3,
-        "use_puppeteer": true,
-        "scraping_config": {
-            "models_endpoint": "/models",
-            "wait_time": 2000,
-            "screenshot_enabled": false
+        "api_config": {
+            "models_url": "https://zenmux.ai/models",
+            "api_url": "https://zenmux.ai/api/frontend/model/listByFilter",
+            "default_ctoken": "173hyG0fqu47kxXs6LWw2OBy",
+            "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         },
         "data_format": {
-            "output_format": "editv3_compatible",
-            "provider_name": "aihubmix",
-            "provider_display_name": "AiHubMix",
-            "provider_website": "https://aihubmix.com",
+            "output_format": "v4_compatible",
+            "provider_name": "zenmux",
+            "provider_display_name": "ZenMux",
+            "provider_website": "https://zenmux.ai",
             "default_window_size": 4096,
             "price_extraction": {
-                "input_field": "display_input",
-                "output_field": "display_output",
+                "input_field": "input_price",
+                "output_field": "output_price",
                 "currency_detection": "auto"
             }
         }

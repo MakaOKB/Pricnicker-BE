@@ -1,16 +1,16 @@
-"""DeepSeek模型服务商插件
+"""ZenMux模型服务商插件
 
-该插件提供DeepSeek系列大语言模型的价格和信息查询功能。
-支持的模型包括DeepSeek-V3.1和DeepSeek-V2.5等。
+该插件提供ZenMux平台上各种大语言模型的价格和信息查询功能。
+支持多个品牌的模型，包括OpenAI、Anthropic、Google等。
 """
 
-from .plugin import AihubmixPlugin
+from .plugin import ZenMuxPlugin
 
 __version__ = "1.0.0"
 __author__ = "PricNicker Team"
-__description__ = "DeepSeek模型服务商插件"
+__description__ = "ZenMux模型服务商插件"
 
 # 插件入口点
-PluginClass = AihubmixPlugin
+PluginClass = ZenMuxPlugin
 
-__all__ = ["AihubmixPlugin", "PluginClass"]
+__all__ = ["ZenMuxPlugin", "PluginClass"]
