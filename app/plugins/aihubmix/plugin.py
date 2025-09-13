@@ -206,6 +206,7 @@ class AihubmixPlugin(BasePlugin):
             name='aihubmix',
             display_name='AIHubMix',
             api_website='https://aihubmix.com',
+            full_name=f'aihubmix/{model_data.get("name", "unknown").lower().replace(" ", "-")}',
             tokens=tokens
         )
         
@@ -322,6 +323,7 @@ class AihubmixPlugin(BasePlugin):
                         name=provider_dict.get('name', 'aihubmix'),
                         display_name=provider_dict.get('display_name', 'AIHubMix'),
                         api_website=provider_dict.get('api_website', 'https://aihubmix.com'),
+                        full_name=f'{provider_dict.get("name", "aihubmix")}/{model_data.get("name", "unknown").lower().replace(" ", "-")}',
                         tokens=provider_tokens
                     )
                     provider_infos.append(provider_info)

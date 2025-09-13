@@ -1,0 +1,29 @@
+{
+  "name": "wolfai_openrouter",
+  "version": "1.0.0",
+  "description": "WolfAI OpenRouter 模型价格爬虫插件，从 OpenRouter API 获取模型价格信息",
+  "author": "PricNicker Team",
+  "brand_name": "WolfAI (OpenRouter)",
+  "enabled": true,
+  "api_key_required": false,
+  "timeout": 30,
+  "extra_config": {
+    "api_url": "https://openrouter.ai/api/frontend/models",
+    "base_url": "https://openrouter.ai",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "supported_brands": [
+      "OpenAI",
+      "Anthropic",
+      "Google",
+      "Qwen",
+      "Meta",
+      "Mistral",
+      "DeepSeek",
+      "xAI",
+      "Cohere",
+      "Perplexity",
+      "Meituan",
+      "Other"
+    ]
+  }
+}

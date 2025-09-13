@@ -618,6 +618,7 @@ class ZenmuxPlugin(BasePlugin):
                         name='zenmux',
                         display_name='ZenMux',
                         api_website='https://zenmux.ai',
+                        full_name=f'zenmux/{name.lower().replace(" ", "-")}',
                         tokens=token_info
                     )
                     

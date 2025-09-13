@@ -1,0 +1,15 @@
+{
+  "name": "dmx",
+  "version": "1.0.0",
+  "description": "DMXAPI 模型价格爬虫插件",
+  "author": "PricNicker Team",
+  "brand_name": "DMXAPI",
+  "enabled": true,
+  "api_key_required": false,
+  "timeout": 30,
+  "extra_config": {
+    "api_url": "https://www.dmxapi.cn/api/pricing",
+    "base_url": "https://www.dmxapi.cn",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  }
+}

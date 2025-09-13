@@ -1,0 +1,15 @@
+{
+  "name": "wolfai",
+  "version": "1.0.0",
+  "description": "WolfAI 模型价格爬虫插件",
+  "author": "PricNicker Team",
+  "brand_name": "WolfAI",
+  "enabled": true,
+  "api_key_required": false,
+  "timeout": 30,
+  "extra_config": {
+    "api_url": "https://wolfai.top/api/pricing",
+    "base_url": "https://wolfai.top",
+    "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  }
+}

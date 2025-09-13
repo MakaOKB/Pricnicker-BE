@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from typing import List
 from ..models import ModelInfo, ProviderInfo, BrandsResponse
 from ..services import ModelService
@@ -11,12 +11,22 @@ model_service = ModelService()
 
 
 @router.get("/models", response_model=List[ModelInfo], summary="获取所有模型信息")
-async def get_models():
+async def get_models(
+    enable_fuzzy_matching: bool = Query(
+        default=True, 
+        description="是否启用模糊匹配功能，当模型名称相似度达到75%时会自动合并"
+    )
+):
     """
     获取所有已注册模型服务商的模型信息，包括价格、上下文窗口等详细信息
+    
+    参数:
+    - enable_fuzzy_matching: 是否启用模糊匹配功能（默认启用）
+      当启用时，系统会自动识别相似度达到75%的模型名称并进行合并，
+      使用靠后出现的模型名称作为标准名称，整合所有匹配模型的供应商数据
     """
     try:
-        models = await model_service.get_all_models()
+        models = await model_service.get_all_models(enable_fuzzy_matching=enable_fuzzy_matching)
         return models
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"获取模型列表失败: {str(e)}")

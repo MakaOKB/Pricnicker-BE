@@ -1,7 +1,9 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from .models import ModelInfo, ProviderInfo
 from .plugins.loader import PluginLoader
 from .plugins.base import BasePlugin
+import difflib
+from collections import defaultdict
 
 
 class ModelService:
@@ -49,8 +51,197 @@ class ModelService:
             await self._load_all_plugins()
             self._plugins_loaded = True
     
-    async def get_all_models(self) -> List[ModelInfo]:
+    def _calculate_similarity(self, name1: str, name2: str) -> float:
+        """计算两个模型名称的相似度
+        
+        Args:
+            name1: 第一个模型名称
+            name2: 第二个模型名称
+            
+        Returns:
+            float: 相似度百分比 (0-100)
+        """
+        # 使用 difflib.SequenceMatcher 计算相似度
+        matcher = difflib.SequenceMatcher(None, name1.lower(), name2.lower())
+        return matcher.ratio() * 100
+    
+    def _merge_similar_models(self, models: List[ModelInfo], similarity_threshold: float = 75.0) -> List[ModelInfo]:
+        """合并相似的模型
+        
+        Args:
+            models: 原始模型列表
+            similarity_threshold: 相似度阈值（默认75%）
+            
+        Returns:
+            List[ModelInfo]: 合并后的模型列表
+        """
+        if not models:
+            return models
+        
+        # 按模型名称分组，相似的模型会被分到同一组
+        model_groups = defaultdict(list)
+        processed_indices = set()
+        
+        for i, model in enumerate(models):
+            if i in processed_indices:
+                continue
+                
+            # 创建新组，以当前模型为基准
+            group_key = model.name
+            model_groups[group_key].append(model)
+            processed_indices.add(i)
+            
+            # 查找相似的模型
+            for j, other_model in enumerate(models[i+1:], start=i+1):
+                if j in processed_indices:
+                    continue
+                    
+                similarity = self._calculate_similarity(model.name, other_model.name)
+                if similarity >= similarity_threshold:
+                    # 使用靠后出现的模型名称作为标准名称
+                    if j > i:  # other_model 出现在后面
+                        # 更新组键为靠后的模型名称
+                        if group_key != other_model.name:
+                            # 将现有模型移动到新的组键下
+                            model_groups[other_model.name].extend(model_groups[group_key])
+                            del model_groups[group_key]
+                            group_key = other_model.name
+                    
+                    model_groups[group_key].append(other_model)
+                    processed_indices.add(j)
+        
+        # 合并每组中的模型数据
+        merged_models = []
+        for standard_name, group_models in model_groups.items():
+            if not group_models:
+                continue
+                
+            # 使用标准名称（靠后出现的）作为合并后的模型名称
+            merged_model = self._merge_model_group(standard_name, group_models)
+            merged_models.append(merged_model)
+        
+        return merged_models
+    
+    def _merge_model_group(self, standard_name: str, models: List[ModelInfo]) -> ModelInfo:
+        """合并一组相似的模型
+        
+        Args:
+            standard_name: 标准模型名称
+            models: 要合并的模型列表
+            
+        Returns:
+            ModelInfo: 合并后的模型信息
+        """
+        if not models:
+            raise ValueError("模型列表不能为空")
+        
+        if len(models) == 1:
+            # 只有一个模型，直接返回但使用标准名称
+            model = models[0]
+            model.name = standard_name
+            return model
+        
+        # 合并多个模型的数据
+        # 使用第一个模型作为基础
+        base_model = models[0]
+        
+        # 收集所有提供商信息 - 保持每个模型的每个提供商独立
+        all_providers = []
+        provider_keys = set()  # 使用更复杂的键来区分同一提供商的不同报价
+        
+        for model_idx, model in enumerate(models):
+            if hasattr(model, 'providers') and model.providers:
+                for provider in model.providers:
+                    # 创建唯一键：提供商名称 + 模型索引 + 价格信息
+                    price_key = f"{provider.tokens.input}_{provider.tokens.output}_{provider.tokens.unit}"
+                    unique_key = f"{provider.name}_{model_idx}_{price_key}"
+                    
+                    if unique_key not in provider_keys:
+                        # 创建新的提供商信息，包含原始模型名称信息
+                        from .models import TokenInfo
+                        provider_tokens = TokenInfo(
+                            input=provider.tokens.input,
+                            output=provider.tokens.output,
+                            unit=provider.tokens.unit
+                        )
+                        
+                        provider_info = ProviderInfo(
+                            name=provider.name,
+                            display_name=f"{provider.display_name} ({model.name})",  # 在显示名称中包含原始模型名
+                            api_website=provider.api_website,
+                            full_name=f"{provider.name}/{model.name.lower().replace(' ', '-')}",
+                            tokens=provider_tokens
+                        )
+                        all_providers.append(provider_info)
+                        provider_keys.add(unique_key)
+            
+            # 如果模型有推荐提供商信息，也要保留
+            if hasattr(model, 'recommended_provider') and model.recommended_provider:
+                unique_key = f"{model.recommended_provider}_{model_idx}_recommended"
+                if unique_key not in provider_keys:
+                    # 创建一个基本的提供商信息
+                    from .models import TokenInfo
+                    
+                    # 如果模型有直接的价格信息，使用它们
+                    input_price = getattr(model, 'input_price', 0.0) if hasattr(model, 'input_price') else 0.0
+                    output_price = getattr(model, 'output_price', 0.0) if hasattr(model, 'output_price') else 0.0
+                    
+                    default_tokens = TokenInfo(input=input_price, output=output_price, unit='USD')
+                    provider_info = ProviderInfo(
+                        name=model.recommended_provider,
+                        display_name=f"{model.recommended_provider} ({model.name})",
+                        api_website='',
+                        full_name=f"{model.recommended_provider}/{model.name.lower().replace(' ', '-')}",
+                        tokens=default_tokens
+                    )
+                    all_providers.append(provider_info)
+                    provider_keys.add(unique_key)
+        
+        # 选择最大的上下文窗口（兼容不同字段名）
+        windows = []
+        for model in models:
+            if hasattr(model, 'window'):
+                windows.append(model.window)
+            elif hasattr(model, 'context_window'):
+                windows.append(model.context_window)
+            else:
+                windows.append(4096)  # 默认值
+        max_window = max(windows) if windows else 4096
+        
+        # 选择最新的品牌信息（通常靠后的更准确）
+        brand = models[-1].brand
+        
+        # 合并数据量信息（取最大值）
+        data_amounts = [getattr(model, 'data_amount', None) for model in models if getattr(model, 'data_amount', None) is not None]
+        max_data_amount = max(data_amounts) if data_amounts else None
+        
+        # 注意：现在每个模型的提供商信息都已经独立保存，不需要创建默认提供商
+        
+        # 创建合并后的模型
+        merged_model = ModelInfo(
+            name=standard_name,
+            brand=brand,
+            data_amount=max_data_amount,
+            window=max_window,
+            providers=all_providers,
+            recommended_provider=models[-1].recommended_provider if hasattr(models[-1], 'recommended_provider') else None
+        )
+        
+        # 保留原模型的额外字段（除了价格相关字段，因为价格信息现在通过providers管理）
+        if hasattr(models[-1], 'context_window'):
+            merged_model.context_window = max_window
+        if hasattr(models[-1], 'description'):
+            merged_model.description = getattr(models[-1], 'description', '')
+        if hasattr(models[-1], 'extra_info'):
+            merged_model.extra_info = getattr(models[-1], 'extra_info', {})
+        
+        return merged_model
+    
+    async def get_all_models(self, enable_fuzzy_matching: bool = True) -> List[ModelInfo]:
         """获取所有服务商的模型列表
+        
+        Args:
+            enable_fuzzy_matching: 是否启用模糊匹配功能（默认启用）
         
         Returns:
             List[ModelInfo]: 所有模型信息的合并列表（包含提供商信息）
@@ -76,6 +267,12 @@ class ModelService:
                 # 记录错误但不中断其他插件的执行
                 print(f"Error getting models from plugin {plugin_name}: {e}")
                 continue
+        
+        # 应用模糊匹配逻辑
+        if enable_fuzzy_matching and all_models:
+            print(f"应用模糊匹配前: {len(all_models)} 个模型")
+            all_models = self._merge_similar_models(all_models)
+            print(f"应用模糊匹配后: {len(all_models)} 个模型")
         
         return all_models
     
@@ -250,6 +447,7 @@ class ModelService:
                                 name=plugin_name,
                                 display_name=provider_data.get('display_name', config.get('brand_name', plugin_name)),
                                 api_website=provider_data.get('api_website', config.get('base_url', '')),
+                                full_name=f"{plugin_name}/default",
                                 tokens=tokens
                             )
                             providers.append(provider_info)
@@ -261,6 +459,7 @@ class ModelService:
                                 name=plugin_name,
                                 display_name=plugin.config.brand_name,
                                 api_website=getattr(plugin.config, 'base_url', ''),
+                                full_name=f"{plugin_name}/default",
                                 tokens=default_tokens
                             )
                             providers.append(provider_info)
@@ -272,6 +471,7 @@ class ModelService:
                             name=plugin_name,
                             display_name=plugin.config.brand_name,
                             api_website=getattr(plugin.config, 'base_url', ''),
+                            full_name=f"{plugin_name}/default",
                             tokens=default_tokens
                         )
                         providers.append(provider_info)
@@ -308,6 +508,7 @@ class ModelService:
                         name=provider_name,
                         display_name=provider_info.display_name,
                         api_website=provider_info.api_website,
+                        full_name=f"{provider_name}/default",
                         tokens=provider_info.tokens
                     )
         except Exception as e:
@@ -334,6 +535,7 @@ class ModelService:
                         name=provider_name,
                         display_name=provider_data.get('display_name', plugin.config.brand_name),
                         api_website=provider_data.get('api_website') or provider_data.get('website', getattr(plugin.config, 'base_url', 'https://example.com')),
+                        full_name=f"{provider_name}/default",
                         tokens=tokens
                     )
         except Exception as e:
@@ -346,6 +548,7 @@ class ModelService:
             name=provider_name,
             display_name=plugin.config.brand_name,
             api_website=getattr(plugin.config, 'base_url', 'https://example.com'),
+            full_name=f"{provider_name}/default",
             tokens=default_tokens
         )
     

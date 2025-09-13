@@ -14,6 +14,7 @@ class ProviderInfo(BaseModel):
     name: str  # 提供商标识名称
     display_name: str  # 提供商显示名称
     api_website: str  # 提供商官方网站地址
+    full_name: str  # 模型完整名称，格式为提供商/模型名
     tokens: TokenInfo  # 该提供商的价格信息
 
 
