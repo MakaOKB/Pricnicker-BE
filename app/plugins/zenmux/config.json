@@ -11,9 +11,17 @@
         "rate_limit": 60
     },
     "provider_info": {
+        "name": "zenmux",
+        "display_name": "ZenMux",
+        "api_website": "https://zenmux.ai",
         "website": "https://zenmux.ai",
         "support_email": "support@zenmux.ai",
-        "documentation": "https://zenmux.ai/docs"
+        "documentation": "https://zenmux.ai/docs",
+        "tokens": {
+            "input": 0.0,
+            "output": 0.0,
+            "unit": "USD"
+        }
     },
     "extra_config": {
         "base_url": "https://zenmux.ai",

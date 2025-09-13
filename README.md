@@ -392,6 +392,83 @@ class YourproviderPlugin(BasePlugin):
 - 错误处理统一使用HTTPException
 - 遵循RESTful API设计规范
 
+## 故障排除
+
+### 常见问题
+
+**Q: 服务启动失败，提示端口被占用**
+
+A: 检查端口是否被其他进程占用：
+```bash
+# macOS/Linux
+lsof -i :8000
+
+# Windows
+netstat -ano | findstr :8000
+```
+
+**Q: 插件加载失败**
+
+A: 检查插件配置和实现：
+1. 确认插件目录结构正确
+2. 检查`config.json`格式是否正确
+3. 确认插件类名与配置文件中的`PluginClass`一致
+4. 查看日志文件获取详细错误信息
+
+**Q: API返回空数据**
+
+A: 可能的原因：
+1. 插件未正确加载或初始化失败
+2. 外部API连接超时或失败
+3. 数据转换过程中出现错误
+
+检查方法：
+```bash
+# 查看服务日志
+tail -f zenmux_plugin.log
+
+# 测试插件加载
+python3 -c "from app.plugins.loader import PluginLoader; loader = PluginLoader(); print(loader.get_loaded_plugins())"
+```
+
+**Q: 跨域请求被阻止**
+
+A: 在生产环境中配置CORS：
+```python
+# 在 app/main.py 中添加
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 生产环境中应指定具体域名
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+### 性能优化
+
+1. **启用缓存**: 对模型数据进行缓存，减少API调用频率
+2. **连接池**: 使用连接池管理HTTP请求
+3. **异步处理**: 利用异步特性并发获取多个插件数据
+4. **数据压缩**: 启用gzip压缩减少传输数据量
+
+### 监控和日志
+
+- 查看应用日志: `tail -f app.log`
+- 查看插件日志: `tail -f zenmux_plugin.log`
+- 监控API性能: 使用`/health`端点进行健康检查
+- 查看API文档: 访问`/docs`获取完整API文档
+
+## 贡献指南
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
+
 ## 许可证
 
 MIT License

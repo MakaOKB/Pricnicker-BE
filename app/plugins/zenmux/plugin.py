@@ -25,8 +25,32 @@ import re
 import requests
 from typing import Dict, List, Optional
 from requests.exceptions import RequestException, Timeout, ConnectionError
-from ..base import BasePlugin, PluginConfig
-from ...models import ModelInfo, TokenInfo, ProviderInfo
+# from ..base import BasePlugin, PluginConfig
+# from ...models import ModelInfo, TokenInfo, ProviderInfo
+
+# 临时类定义，用于独立测试
+class PluginConfig:
+    def __init__(self):
+        pass
+
+class BasePlugin:
+    def __init__(self, config=None):
+        self.config = config or PluginConfig()
+
+class ModelInfo:
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+class TokenInfo:
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+class ProviderInfo:
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
 # 配置日志
 logging.basicConfig(
@@ -74,7 +98,7 @@ class ZenmuxPlugin(BasePlugin):
     DEFAULT_CTOKEN = "173hyG0fqu47kxXs6LWw2OBy"
     DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     
-    def __init__(self, config: PluginConfig):
+    def __init__(self, config: PluginConfig = None):
         """初始化插件"""
         super().__init__(config)
         self.base_url = self.BASE_URL
@@ -139,16 +163,31 @@ class ZenmuxPlugin(BasePlugin):
                 
                 if response.status_code == 200:
                     try:
-                        data = response.json()
-                        if data.get('success') and data.get('data'):
-                            models = data['data']
-                            if len(models) > 0:
-                                logger.info(f"✅ API调用成功，获取到 {len(models)} 个模型")
-                                return self._convert_api_models_to_internal_format(models)
+                        response_data = response.json()
+                        
+                        # 检查响应格式
+                        if isinstance(response_data, dict) and 'success' in response_data and 'data' in response_data:
+                            if response_data.get('success'):
+                                models = response_data['data']
+                                if len(models) > 0:
+                                    logger.info(f"✅ API调用成功，获取到 {len(models)} 个模型")
+                                    
+                                    # 保存响应数据用于调试
+                                    with open('api_response.json', 'w', encoding='utf-8') as f:
+                                        json.dump(response_data, f, ensure_ascii=False, indent=2)
+                                    
+                                    return models
+                                else:
+                                    logger.warning("API返回空模型列表")
                             else:
-                                logger.warning("API返回空模型列表")
+                                logger.error(f"API返回失败状态: {response_data}")
                         else:
-                            logger.error(f"API返回格式异常: success={data.get('success')}, data_length={len(data.get('data', []))}")
+                            # 兼容直接返回数组的情况
+                            if isinstance(response_data, list):
+                                logger.info(f"✅ API调用成功，获取到 {len(response_data)} 个模型")
+                                return response_data
+                            else:
+                                logger.error(f"API返回格式异常: {type(response_data)}")
                     except ValueError as e:
                         logger.error(f"API响应JSON解析失败: {e}")
                 elif response.status_code == 429:
@@ -229,7 +268,7 @@ class ZenmuxPlugin(BasePlugin):
             # 根据author字段确定品牌
             brand = brand_mapping.get(author.lower(), author.title())
             model_name = name
-            
+        
         return brand, model_name
     
     def _convert_api_models_to_internal_format(self, api_models: List[Dict]) -> List[Dict]:
@@ -369,16 +408,14 @@ class ZenmuxPlugin(BasePlugin):
             bool: 数据是否有效
         """
         try:
-            # 检查必需字段
-            required_fields = ['name', 'brand']
-            for field in required_fields:
-                if not model_data.get(field):
-                    logger.debug(f"缺少必需字段: {field}")
-                    return False
+            # 检查必需字段 - 只检查name字段，brand从name中提取
+            if not model_data.get('name'):
+                logger.debug(f"缺少必需字段: name")
+                return False
             
-            # 检查价格数据
-            input_price = model_data.get('input_price')
-            output_price = model_data.get('output_price')
+            # 检查价格数据 - 使用正确的字段名
+            input_price = model_data.get('pricing_prompt')
+            output_price = model_data.get('pricing_completion')
             
             if input_price is not None:
                 try:
@@ -553,6 +590,16 @@ class ZenmuxPlugin(BasePlugin):
                         failed_conversions += 1
                         continue
                     
+                    # 调试：打印价格相关字段
+                    if i < 3:  # 只打印前3个模型的调试信息
+                        logger.info(f"模型 {i+1} 价格字段: pricing_prompt={model_data.get('pricing_prompt')}, pricing_completion={model_data.get('pricing_completion')}")
+                        logger.info(f"模型 {i+1} 所有字段: {list(model_data.keys())}")
+                    
+                    # 从name字段提取brand信息
+                    model_name = model_data.get('name', 'Unknown')
+                    author = model_data.get('author', '')
+                    brand, name = self._parse_brand_and_name(model_name, author)
+                    
                     # 解析数据量，确保类型为int或null
                     data_amount = model_data.get('tokens_used', None)
                     if data_amount is not None:
@@ -579,12 +626,20 @@ class ZenmuxPlugin(BasePlugin):
                             except (ValueError, TypeError):
                                 data_amount = None
                     
-                    # 创建TokenInfo对象
+                    # 创建TokenInfo对象 - 使用API返回的正确字段名
+                    input_price = float(model_data.get('pricing_prompt', 0.0))
+                    output_price = float(model_data.get('pricing_completion', 0.0))
+                    currency = 'USD'  # ZenMux API返回的价格单位为USD
+                    
                     token_info = TokenInfo(
-                        input=float(model_data.get('input_price', 0.0)),
-                        output=float(model_data.get('output_price', 0.0)),
-                        unit=model_data.get('currency', 'CNY')
+                        input=input_price,
+                        output=output_price,
+                        unit=currency
                     )
+                    
+                    # 调试：打印TokenInfo创建后的值
+                    if i < 3:
+                        logger.info(f"模型 {i+1} TokenInfo: input={token_info.input}, output={token_info.output}, unit={token_info.unit}")
                     
                     # 创建ProviderInfo对象
                     provider_info = ProviderInfo(
@@ -596,10 +651,10 @@ class ZenmuxPlugin(BasePlugin):
                     
                     # 创建ModelInfo对象
                     model_info = ModelInfo(
-                        brand=model_data.get('brand', 'Unknown'),
-                        name=model_data.get('name', 'Unknown'),
+                        brand=brand,
+                        name=name,
                         data_amount=data_amount,
-                        window=self._parse_context_length(model_data.get('context_window', '4K')),
+                        window=self._parse_context_length(str(model_data.get('context_length', 4096))),
                         providers=[provider_info],
                         recommended_provider='zenmux'
                     )
@@ -622,6 +677,11 @@ class ZenmuxPlugin(BasePlugin):
                         } for provider in model_info.providers],
                         'recommended_provider': model_info.recommended_provider
                     }
+                    
+                    # 调试：打印验证字典中的tokens值
+                    if i < 3:
+                        tokens_dict = model_dict['providers'][0]['tokens']
+                        logger.info(f"模型 {i+1} 验证字典tokens: input={tokens_dict['input']}, output={tokens_dict['output']}, unit={tokens_dict['unit']}")
                     
                     if self._validate_converted_model(model_dict):
                         models.append(model_info)
@@ -667,7 +727,7 @@ class ZenmuxPlugin(BasePlugin):
             # 确保资源清理
             logger.info("🔧 资源清理完成")
     
-    def get_brands(self) -> List[str]:
+    async def get_brands(self) -> List[str]:
         """
         获取支持的品牌列表
         
@@ -691,7 +751,7 @@ class ZenmuxPlugin(BasePlugin):
         try:
             logger.info("🏷️ 开始获取品牌列表...")
             
-            models = self.get_models()
+            models = await self.get_models()
             if not models:
                 logger.warning("⚠️ 没有模型数据，无法获取品牌列表")
                 return []
@@ -711,7 +771,7 @@ class ZenmuxPlugin(BasePlugin):
             logger.error(f"💥 获取品牌列表失败: {e}")
             return []
     
-    def get_model_by_name(self, model_name: str) -> Optional[Dict]:
+    async def get_model_by_name(self, model_name: str) -> Optional[ModelInfo]:
         """
         根据模型名称获取特定模型信息
         
@@ -719,10 +779,10 @@ class ZenmuxPlugin(BasePlugin):
             model_name: 模型名称
             
         Returns:
-            Dict: 模型信息，未找到时返回None
+            ModelInfo: 模型信息，未找到时返回None
         """
         try:
-            models = self.get_models()
+            models = await self.get_models()
             for model in models:
                 if model.name.lower() == model_name.lower():
                     return model

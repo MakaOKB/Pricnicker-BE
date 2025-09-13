@@ -1,0 +1,182 @@
+{
+  "price_examples": [
+    {
+      "model": "AiHubmix-Phi-4-mini-reasoning",
+      "model_ratio": 0.06,
+      "completion_ratio": 1.0,
+      "input_price": 3.6e-05,
+      "output_price": 0.0012
+    },
+    {
+      "model": "AiHubmix-Phi-4-reasoning",
+      "model_ratio": 0.1,
+      "completion_ratio": 1.0,
+      "input_price": 6e-05,
+      "output_price": 0.0012
+    },
+    {
+      "model": "AiHubmix-mistral-medium",
+      "model_ratio": 0.2,
+      "completion_ratio": 5.0,
+      "input_price": 0.00012,
+      "output_price": 0.006
+    },
+    {
+      "model": "Baichuan3-Turbo",
+      "model_ratio": 0.95,
+      "completion_ratio": 1.0,
+      "input_price": 0.00057,
+      "output_price": 0.0012
+    },
+    {
+      "model": "Baichuan3-Turbo-128k",
+      "model_ratio": 1.9,
+      "completion_ratio": 1.0,
+      "input_price": 0.00114,
+      "output_price": 0.0012
+    },
+    {
+      "model": "Baichuan4",
+      "model_ratio": 8.0,
+      "completion_ratio": 1.0,
+      "input_price": 0.0048,
+      "output_price": 0.0012
+    },
+    {
+      "model": "Baichuan4-Air",
+      "model_ratio": 0.08,
+      "completion_ratio": 1.0,
+      "input_price": 4.8e-05,
+      "output_price": 0.0012
+    },
+    {
+      "model": "Baichuan4-Turbo",
+      "model_ratio": 1.2,
+      "completion_ratio": 1.0,
+      "input_price": 0.00072,
+      "output_price": 0.0012
+    },
+    {
+      "model": "ByteDance-Seed/Seed-OSS-36B-Instruct",
+      "model_ratio": 0.1,
+      "completion_ratio": 2.67,
+      "input_price": 6e-05,
+      "output_price": 0.003204
+    },
+    {
+      "model": "DESCRIBE",
+      "model_ratio": 1.0,
+      "completion_ratio": 1.0,
+      "input_price": 0.0006,
+      "output_price": 0.0012
+    }
+  ],
+  "context_examples": [
+    {
+      "model": "AiHubmix-Phi-4-mini-reasoning",
+      "context_length": 128000,
+      "source": "name"
+    },
+    {
+      "model": "Baichuan3-Turbo-128k",
+      "context_length": 128000,
+      "source": "name"
+    },
+    {
+      "model": "ByteDance-Seed/Seed-OSS-36B-Instruct",
+      "context_length": 36000000000,
+      "source": "name"
+    },
+    {
+      "model": "DeepSeek-R1",
+      "context_length": 64000,
+      "source": "description"
+    },
+    {
+      "model": "DeepSeek-R1-Distill-Qwen-32B",
+      "context_length": 32000000000,
+      "source": "name"
+    },
+    {
+      "model": "DeepSeek-R1-Distill-Qwen-7B",
+      "context_length": 7000000000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-1.5-lite-32k",
+      "context_length": 32000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-1.5-pro-256k",
+      "context_length": 256000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-1.5-pro-32k",
+      "context_length": 32000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-1.5-thinking-pro",
+      "context_length": 128000,
+      "source": "description"
+    },
+    {
+      "model": "Doubao-1.5-vision-pro-32k",
+      "context_length": 32000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-lite-128k",
+      "context_length": 128000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-lite-32k",
+      "context_length": 32000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-pro-128k",
+      "context_length": 128000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-pro-256k",
+      "context_length": 256000,
+      "source": "name"
+    },
+    {
+      "model": "Doubao-pro-32k",
+      "context_length": 32000,
+      "source": "name"
+    },
+    {
+      "model": "GPT-OSS-20B",
+      "context_length": 20000000000,
+      "source": "name"
+    },
+    {
+      "model": "MiniMax-Text-01",
+      "context_length": 1000000,
+      "source": "name"
+    },
+    {
+      "model": "MiniMaxAI/MiniMax-M1-80k",
+      "context_length": 80000,
+      "source": "name"
+    },
+    {
+      "model": "Pro/THUDM/GLM-4.1V-9B-Thinking",
+      "context_length": 9000000000,
+      "source": "name"
+    }
+  ],
+  "statistics": {
+    "total_models": 427,
+    "unique_input_prices": 88,
+    "unique_output_prices": 22,
+    "special_context_models": 174
+  }
+}

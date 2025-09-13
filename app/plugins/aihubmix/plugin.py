@@ -3,26 +3,60 @@
 """
 AIHubMix 模型价格爬虫插件
 
-该插件从 aihubmix.com 获取AI模型的价格信息。
-数据存储在页面的localStorage中，需要使用Selenium获取。
+该插件从 aihubmix.com API 获取AI模型的价格信息。
+使用 API 端点: https://aihubmix.com/call/mdl_info
 
 作者: Assistant
-版本: 2.0
+版本: 3.0
 """
 
 import json
-import time
 import logging
 import re
+import requests
 from typing import Dict, List, Optional
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
-from ..base import BasePlugin, PluginConfig
-from ...models import ModelInfo, TokenInfo, ProviderInfo
+# from ..base import BasePlugin, PluginConfig
+# from ...models import ModelInfo, TokenInfo, ProviderInfo
+
+# 临时类定义用于测试
+class TokenInfo:
+    def __init__(self, input, output, unit):
+        self.input = input
+        self.output = output
+        self.unit = unit
+
+class ProviderInfo:
+    def __init__(self, name, website=None, display_name=None, api_website=None, tokens=None, **kwargs):
+        self.name = name
+        self.website = website or api_website
+        self.display_name = display_name
+        self.api_website = api_website
+        self.tokens = tokens
+        # 接受其他任意参数以避免错误
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+class ModelInfo:
+    def __init__(self, name, provider=None, context_window=None, token_info=None, brand=None, data_amount=None, window=None, providers=None, **kwargs):
+        self.name = name
+        self.provider = provider
+        self.context_window = context_window or window
+        self.token_info = token_info
+        self.brand = brand
+        self.data_amount = data_amount
+        self.window = window
+        self.providers = providers or []
+        # 接受其他任意参数以避免错误
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+class PluginConfig:
+    def __init__(self):
+        pass
+
+class BasePlugin:
+    def __init__(self, config):
+        self.config = config
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -32,79 +66,234 @@ class AihubmixPlugin(BasePlugin):
     """
     AIHubMix 价格爬虫插件
     
-    从 aihubmix.com 获取AI模型价格信息
+    从 aihubmix.com API 获取AI模型价格信息
     """
     
     def __init__(self, config: PluginConfig):
         """初始化插件"""
         super().__init__(config)
-        self.base_url = "https://aihubmix.com/models"
-        self.driver = None
-        self.driver_config = {
-            'timeout': 30,
-            'wait_time': 5,
-            'headless': True
+        self.api_url = "https://aihubmix.com/call/mdl_info"
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+            'Referer': 'https://aihubmix.com/models',
+            'Origin': 'https://aihubmix.com'
         }
         self._models_cache = None  # 添加缓存机制
         logger.info("AIHubMix插件初始化完成")
     
-    def _setup_driver(self) -> webdriver.Chrome:
+    def _fetch_api_data(self) -> Optional[List[Dict]]:
         """
-        设置Chrome WebDriver
-        
-        Returns:
-            webdriver.Chrome: 配置好的Chrome驱动
-        """
-        chrome_options = Options()
-        if self.driver_config['headless']:
-            chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument('--window-size=1920,1080')
-        chrome_options.add_argument('--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
-        
-        try:
-            driver = webdriver.Chrome(options=chrome_options)
-            driver.set_page_load_timeout(self.driver_config['timeout'])
-            return driver
-        except Exception as e:
-            logger.error(f"设置Chrome驱动失败: {e}")
-            raise
-    
-    def _get_localStorage_data(self) -> Optional[List[Dict]]:
-        """
-        从localStorage获取模型数据
+        从 API 获取模型数据
         
         Returns:
             Optional[List[Dict]]: 模型数据列表，失败时返回None
         """
         try:
-            # 获取localStorage中的model_info数据
-            script = """
-            try {
-                const modelInfoStr = localStorage.getItem('model_info');
-                if (!modelInfoStr) {
-                    return null;
-                }
-                return JSON.parse(modelInfoStr);
-            } catch (e) {
-                console.error('获取localStorage数据失败:', e);
-                return null;
-            }
-            """
+            logger.info(f"正在请求 API: {self.api_url}")
+            response = requests.get(self.api_url, headers=self.headers, timeout=30)
             
-            result = self.driver.execute_script(script)
-            if result:
-                logger.info(f"成功从localStorage获取到 {len(result)} 个模型数据")
-                return result
-            else:
-                logger.warning("localStorage中未找到model_info数据")
+            if response.status_code != 200:
+                logger.error(f"API 请求失败，状态码: {response.status_code}")
                 return None
-                
-        except Exception as e:
-            logger.error(f"获取localStorage数据失败: {e}")
+            
+            data = response.json()
+            if not data.get('success', False):
+                logger.error("API 返回失败状态")
+                return None
+            
+            models_data = data.get('data', [])
+            logger.info(f"成功从 API 获取到 {len(models_data)} 个模型数据")
+            return models_data
+            
+        except requests.RequestException as e:
+            logger.error(f"网络请求失败: {e}")
             return None
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON 解析失败: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"获取 API 数据失败: {e}")
+            return None
+    
+    def _parse_context_length(self, model_data: Dict) -> int:
+        """
+        解析上下文长度，从多个字段中提取
+        
+        Args:
+            model_data: 模型数据字典
+            
+        Returns:
+            int: 上下文长度数值
+        """
+        # 首先检查 context_length 字段
+        context_length = model_data.get('context_length', '')
+        if context_length and str(context_length).strip():
+            return self._extract_number_with_unit(str(context_length))
+        
+        # 从描述中提取上下文信息
+        desc = model_data.get('desc', '') or model_data.get('desc_en', '')
+        if desc:
+            # 匹配各种上下文长度表达方式
+            patterns = [
+                r'([0-9]+[KMB]?)\s*(?:令牌|token|上下文|context)',
+                r'([0-9]+[KMB]?)\s*(?:tokens?|contexts?)',
+                r'(?:支持|context|window).*?([0-9]+[KMB]?)\s*(?:令牌|token)',
+                r'([0-9]+[KMB]?)\s*(?:token|令牌)\s*(?:上下文|context)',
+                r'上下文长度.*?([0-9]+[KMB]?)',
+                r'context.*?length.*?([0-9]+[KMB]?)',
+            ]
+            
+            for pattern in patterns:
+                match = re.search(pattern, desc, re.IGNORECASE)
+                if match:
+                    context_str = match.group(1)
+                    parsed_value = self._extract_number_with_unit(context_str)
+                    if parsed_value > 4096:  # 只有当解析出的值大于默认值时才使用
+                        return parsed_value
+        
+        # 从模型名称中提取（如 "Baichuan3-Turbo-128k"）
+        model_name = model_data.get('model', '') or model_data.get('model_name', '')
+        if model_name:
+            match = re.search(r'[-_]([0-9]+[KMB]?)(?:$|[-_])', model_name, re.IGNORECASE)
+            if match:
+                context_str = match.group(1)
+                parsed_value = self._extract_number_with_unit(context_str)
+                if parsed_value > 4096:
+                    return parsed_value
+        
+        return 4096  # 默认值
+    
+    def _extract_number_with_unit(self, text: str) -> int:
+        """
+        从文本中提取数字和单位，转换为实际数值
+        
+        Args:
+            text: 包含数字和单位的文本，如 "128K", "32k", "4096"
+            
+        Returns:
+            int: 转换后的数值
+        """
+        if not text:
+            return 4096
+        
+        # 移除所有空格并转为小写
+        text = str(text).replace(' ', '').lower()
+        
+        # 提取数字和单位
+        match = re.search(r'([0-9.]+)([kmb]?)', text)
+        if not match:
+            return 4096
+        
+        number_str, unit = match.groups()
+        try:
+            number = float(number_str)
+            
+            # 根据单位转换
+            if unit == 'k':
+                return int(number * 1000)
+            elif unit == 'm':
+                return int(number * 1000000)
+            elif unit == 'b':
+                return int(number * 1000000000)
+            else:
+                return int(number)
+        except ValueError:
+            return 4096
+    
+    def _parse_token_info(self, model_data: Dict) -> Optional[Dict]:
+        """
+        解析模型的价格信息，直接使用API返回的价格比率
+        
+        Args:
+            model_data: 模型数据字典
+            
+        Returns:
+            Optional[Dict]: 包含input, output, unit的价格信息字典
+        """
+        try:
+            # 直接获取API返回的价格比率，不做任何计算
+            model_ratio = model_data.get('model_ratio', 0)
+            completion_ratio = model_data.get('completion_ratio', model_ratio)
+            
+            if model_ratio is not None and completion_ratio is not None:
+                return {
+                    'input': float(model_ratio),
+                    'output': float(completion_ratio), 
+                    'unit': 'ratio'  # 使用ratio作为单位，表示这是API返回的原始比率
+                }
+            
+            return None
+            
+        except Exception as e:
+            logger.warning(f"解析价格信息失败: {e}")
+            return None
+    
+    def _extract_data_amount(self, model_data: Dict) -> Optional[int]:
+        """
+        提取模型的数据量信息
+        
+        Args:
+            model_data: 模型数据字典
+            
+        Returns:
+            Optional[int]: 数据量，单位为GB
+        """
+        # 从描述中尝试提取数据量信息
+        desc = model_data.get('desc', '')
+        if desc:
+            # 查找类似 "训练数据量: 1.5TB" 的模式
+            data_match = re.search(r'([0-9.]+)\s*([KMGT]?B)', desc, re.IGNORECASE)
+            if data_match:
+                amount_str, unit = data_match.groups()
+                try:
+                    amount = float(amount_str)
+                    unit = unit.upper()
+                    
+                    if unit == 'TB':
+                        return int(amount * 1000)
+                    elif unit == 'GB':
+                        return int(amount)
+                    elif unit == 'MB':
+                        return int(amount / 1000)
+                    elif unit == 'KB':
+                        return int(amount / 1000000)
+                except ValueError:
+                    pass
+        
+        return None
+    
+    def _create_provider_info(self, model_data: Dict, token_info: Optional[Dict]) -> ProviderInfo:
+        """
+        创建提供商信息对象
+        
+        Args:
+            model_data: 模型数据字典
+            token_info: 价格信息字典
+            
+        Returns:
+            ProviderInfo: 提供商信息对象
+        """
+        # 创建TokenInfo对象
+        if token_info:
+            tokens = TokenInfo(
+                input=token_info['input'],
+                output=token_info['output'],
+                unit=token_info['unit']
+            )
+        else:
+            tokens = TokenInfo(input=0.0, output=0.0, unit='CNY')
+        
+        # 创建ProviderInfo对象
+        provider_info = ProviderInfo(
+            name='aihubmix',
+            display_name='AIHubMix',
+            api_website='https://aihubmix.com',
+            tokens=tokens
+        )
+        
+        return provider_info
     
     def _parse_model_data(self, raw_data: List[Dict]) -> List[Dict]:
         """
@@ -125,210 +314,48 @@ class AihubmixPlugin(BasePlugin):
                 developer = model_data.get('developer', '')
                 
                 # 解析上下文窗口大小
-                context_length = model_data.get('context_length', '')
-                window = self._parse_context_length(context_length)
+                window = self._parse_context_length(model_data)
                 
                 # 解析价格信息
                 token_info = self._parse_token_info(model_data)
                 
                 # 创建提供商信息
-                provider_info_obj = self._create_provider_info(model_data, token_info)
+                provider_info = self._create_provider_info(model_data, token_info)
                 
                 # 将ProviderInfo对象转换为字典
-                provider_info = {
-                    'name': provider_info_obj.name,
-                    'display_name': provider_info_obj.display_name,
-                    'api_website': provider_info_obj.api_website,
+                provider_dict = {
+                    'name': provider_info.name,
+                    'display_name': provider_info.display_name,
+                    'api_website': provider_info.api_website,
                     'tokens': {
-                        'input': provider_info_obj.tokens.input,
-                        'output': provider_info_obj.tokens.output,
-                        'unit': provider_info_obj.tokens.unit
+                        'input': provider_info.tokens.input,
+                        'output': provider_info.tokens.output,
+                        'unit': provider_info.tokens.unit
                     }
                 }
                 
                 # 构建符合ModelInfo格式的数据
                 model_info = {
-                    'brand': developer,  # 使用developer作为brand
+                    'brand': developer or 'Unknown',
                     'name': model_name,
-                    'data_amount': self._extract_data_amount(model_data),  # 可为null
                     'window': window,
-                    'providers': [provider_info]  # 包含提供商信息列表
+                    'data_amount': self._extract_data_amount(model_data),
+                    'tokens': {
+                        'input': provider_info.tokens.input,
+                        'output': provider_info.tokens.output,
+                        'unit': provider_info.tokens.unit
+                    } if token_info else None,
+                    'providers': [provider_dict]
                 }
-                
-                # 如果有基础价格信息，添加到模型级别
-                if token_info:
-                    model_info['tokens'] = token_info
                 
                 parsed_models.append(model_info)
                 
             except Exception as e:
-                logger.error(f"解析模型数据失败: {model_data.get('model', 'unknown')}, 错误: {e}")
+                logger.warning(f"解析模型数据失败: {e}, 模型数据: {model_data}")
                 continue
         
-        logger.info(f"成功解析 {len(parsed_models)} 个模型")
+        logger.info(f"成功解析 {len(parsed_models)} 个模型数据")
         return parsed_models
-    
-    def _parse_context_length(self, context_length: str) -> int:
-        """
-        解析上下文长度字符串为整数，使用配置文件中的默认值
-        
-        Args:
-            context_length: 上下文长度字符串，如 "128K", "32000"
-            
-        Returns:
-            int: 上下文长度数值
-        """
-        # 从配置文件获取默认窗口大小
-        default_window = self.config.extra_config.get('data_format', {}).get('default_window_size', 4096)
-        
-        if not context_length:
-            return default_window
-            
-        try:
-            # 处理 "128K" 格式
-            if isinstance(context_length, str):
-                context_length = context_length.upper().strip()
-                if context_length.endswith('K'):
-                    return int(float(context_length[:-1]) * 1000)
-                elif context_length.endswith('M'):
-                    return int(float(context_length[:-1]) * 1000000)
-                else:
-                    return int(context_length)
-            else:
-                return int(context_length)
-        except (ValueError, TypeError):
-            logger.warning(f"无法解析上下文长度: {context_length}，使用默认值{default_window}")
-            return default_window
-    
-    def _parse_token_info(self, model_data: Dict) -> Optional[Dict]:
-        """
-        解析价格信息为TokenInfo格式，使用配置文件中的字段设置
-        
-        Args:
-            model_data: 原始模型数据
-            
-        Returns:
-            Optional[Dict]: TokenInfo格式的价格信息
-        """
-        try:
-            # 从配置文件获取价格提取设置
-            price_config = self.config.extra_config.get('data_format', {}).get('price_extraction', {})
-            input_field = price_config.get('input_field', 'display_input')
-            output_field = price_config.get('output_field', 'display_output')
-            
-            # 从指定字段提取价格
-            display_input = model_data.get(input_field, '')
-            display_output = model_data.get(output_field, '')
-            
-            input_price = self._extract_price_from_display(display_input)
-            output_price = self._extract_price_from_display(display_output)
-            
-            if input_price is not None and output_price is not None:
-                # 根据配置或价格范围判断货币单位
-                currency_detection = price_config.get('currency_detection', 'auto')
-                if currency_detection == 'auto':
-                    # 自动判断货币单位（根据价格范围推测）
-                    unit = "CNY" if input_price > 1 else "USD"
-                else:
-                    # 使用默认货币
-                    unit = self.config.extra_config.get('default_currency', 'USD')
-                
-                return {
-                    'input': input_price,
-                    'output': output_price,
-                    'unit': unit
-                }
-            
-            return None
-            
-        except Exception as e:
-            logger.warning(f"解析价格信息失败: {e}")
-            return None
-    
-    def _extract_price_from_display(self, display_text: str) -> Optional[float]:
-        """
-        从显示文本中提取价格数值
-        
-        Args:
-            display_text: 价格显示文本
-            
-        Returns:
-            Optional[float]: 提取的价格数值
-        """
-        if not display_text:
-            return None
-            
-        import re
-        # 匹配数字（包括小数）
-        price_match = re.search(r'([0-9]+\.?[0-9]*)', display_text)
-        if price_match:
-            try:
-                return float(price_match.group(1))
-            except ValueError:
-                return None
-        return None
-    
-    def _extract_data_amount(self, model_data: Dict) -> Optional[int]:
-        """
-        提取训练数据量信息
-        
-        Args:
-            model_data: 原始模型数据
-            
-        Returns:
-            Optional[int]: 训练数据量（可为None）
-        """
-        # 从描述或其他字段中尝试提取数据量信息
-        # 这里可以根据实际数据结构进行调整
-        return None  # 暂时返回None，可根据实际数据调整
-    
-    def _create_provider_info(self, model_data: Dict, token_info: Optional[Dict]) -> Dict:
-        """
-        创建提供商信息，使用配置文件中的设置
-        
-        Args:
-            model_data: 原始模型数据
-            token_info: 价格信息
-            
-        Returns:
-            Dict: ProviderInfo格式的提供商信息
-        """
-        # 从配置文件获取提供商信息
-        data_format_config = self.config.extra_config.get('data_format', {})
-        
-        provider_name = data_format_config.get('provider_name', 'aihubmix')
-        display_name = data_format_config.get('provider_display_name', 'AiHubMix')
-        api_website = data_format_config.get('provider_website', 'https://aihubmix.com')
-        
-        # 如果api_website为None，使用默认值
-        if api_website is None:
-            api_website = 'https://aihubmix.com'
-        
-        # 创建TokenInfo对象
-        if token_info:
-            tokens = TokenInfo(
-                input=token_info.get('input', 0.0),
-                output=token_info.get('output', 0.0),
-                unit=token_info.get('unit', 'USD')
-            )
-        else:
-            # 提供默认价格信息
-            default_currency = self.config.extra_config.get('default_currency', 'USD')
-            tokens = TokenInfo(
-                input=0.0,
-                output=0.0,
-                unit=default_currency
-            )
-        
-        # 创建ProviderInfo对象
-        provider_info = ProviderInfo(
-            name=provider_name,
-            display_name=display_name,
-            api_website=api_website,
-            tokens=tokens
-        )
-        
-        return provider_info
     
     async def get_models(self) -> List[ModelInfo]:
         """
@@ -338,36 +365,13 @@ class AihubmixPlugin(BasePlugin):
             List[ModelInfo]: ModelInfo对象列表
         """
         try:
-            # 设置WebDriver
-            self.driver = self._setup_driver()
-            logger.info(f"正在访问: {self.base_url}")
-            
-            # 访问页面
-            self.driver.get(self.base_url)
-            
-            # 等待页面加载
-            logger.info(f"等待页面加载 {self.driver_config['wait_time']} 秒...")
-            time.sleep(self.driver_config['wait_time'])
-            
-            # 等待React应用加载完成
-            try:
-                WebDriverWait(self.driver, self.driver_config['timeout']).until(
-                    EC.presence_of_element_located((By.ID, "root"))
-                )
-                logger.info("React应用加载完成")
-            except TimeoutException:
-                logger.warning("等待React应用加载超时，继续尝试获取数据")
-            
-            # 额外等待确保数据加载到localStorage
-            time.sleep(3)
-            
-            # 从localStorage获取数据
-            raw_data = self._get_localStorage_data()
+            # 从 API 获取数据
+            raw_data = self._fetch_api_data()
             if not raw_data:
-                logger.error("未能从localStorage获取到数据")
+                logger.error("未能从 API 获取到数据")
                 return []
             
-            # 解析数据为ModelInfo对象列表
+            # 解析数据为ModelInfo格式
             models = self._parse_model_data(raw_data)
             
             # 转换为ModelInfo对象列表
@@ -405,7 +409,8 @@ class AihubmixPlugin(BasePlugin):
                     name=model_data.get('name', 'Unknown'),
                     data_amount=model_data.get('data_amount'),
                     window=model_data.get('window', 4096),
-                    providers=provider_infos
+                    providers=provider_infos,
+                    token_info=token_info
                 )
                 
                 formatted_models.append(model_info)
@@ -416,14 +421,10 @@ class AihubmixPlugin(BasePlugin):
         except Exception as e:
             logger.error(f"获取模型数据失败: {e}")
             return []
-        finally:
-            if self.driver:
-                self.driver.quit()
-                logger.info("WebDriver已关闭")
     
     async def get_brands(self) -> List[str]:
         """
-        获取所有品牌列表，基于新的数据格式
+        获取所有品牌列表
         
         Returns:
             List[str]: 品牌名称列表
@@ -455,84 +456,67 @@ class AihubmixPlugin(BasePlugin):
     
     async def validate_config(self) -> bool:
         """
-        验证插件配置
+        验证插件配置是否正确
         
         Returns:
             bool: 配置是否有效
         """
         try:
-            # 检查Chrome是否可用
-            test_driver = self._setup_driver()
-            test_driver.quit()
-            logger.info("配置验证通过")
-            return True
+            # 测试 API 连接
+            response = requests.get(self.api_url, headers=self.headers, timeout=10)
+            if response.status_code == 200:
+                logger.info("API 连接测试成功")
+                return True
+            else:
+                logger.error(f"API 连接测试失败，状态码: {response.status_code}")
+                return False
         except Exception as e:
             logger.error(f"配置验证失败: {e}")
             return False
 
 # 测试代码
 if __name__ == "__main__":
-    # 创建测试配置
-    from ..base import PluginConfig
-    test_config = PluginConfig(
-        name="aihubmix",
-        version="2.0",
-        description="AIHubMix模型价格爬虫插件",
-        author="Assistant",
-        brand_name="AIHubMix"
-    )
-    
-    plugin = AihubmixPlugin(test_config)
-    
-    # 验证配置
     import asyncio
-    if not asyncio.run(plugin.validate_config()):
-        print("配置验证失败，请检查Chrome WebDriver是否正确安装")
-        exit(1)
     
-    print("开始获取模型数据...")
-    
-    # 获取模型数据
-    models = asyncio.run(plugin.get_models())
-    print(f"\n获取到 {len(models)} 个模型")
-    
-    # 显示前5个模型的详细信息（新格式）
-    if models:
-        print("\n前5个模型详细信息（editv3.json格式）:")
-        for i, model in enumerate(models[:5]):
-            print(f"\n{i+1}. {model.get('name', 'N/A')}")
-            print(f"   品牌: {model.get('brand', 'N/A')}")
-            print(f"   窗口大小: {model.get('window', 'N/A')}")
-            print(f"   数据量: {model.get('data_amount', 'N/A')}")
+    async def test_plugin():
+        # 创建插件实例
+        config = PluginConfig()
+        plugin = AihubmixPlugin(config)
+        
+        print("开始测试修改后的价格解析逻辑...")
+        
+        # 获取模型数据
+        models = await plugin.get_models()
+        
+        if models:
+            print(f"\n成功获取 {len(models)} 个模型")
             
-            # 显示价格信息
-            tokens = model.get('tokens')
-            if tokens:
-                print(f"   价格信息: 输入 {tokens.get('input', 'N/A')} {tokens.get('unit', 'N/A')}/1K tokens, 输出 {tokens.get('output', 'N/A')} {tokens.get('unit', 'N/A')}/1K tokens")
-            else:
-                print(f"   价格信息: 无")
+            # 显示前10个模型的价格信息
+            print("\n=== 前10个模型的价格信息（直接使用API比率） ===")
+            for i, model in enumerate(models[:10]):
+                if model.token_info:
+                    print(f"{i+1}. {model.name}:")
+                    print(f"   输入价格: {model.token_info.input} {model.token_info.unit}")
+                    print(f"   输出价格: {model.token_info.output} {model.token_info.unit}")
+                else:
+                    print(f"{i+1}. {model.name}: 无价格信息")
             
-            # 显示提供商信息
-            providers = model.get('providers', [])
-            if providers:
-                provider = providers[0]  # 显示第一个提供商
-                print(f"   提供商: {provider.get('display_name', 'N/A')} ({provider.get('name', 'N/A')})")
-                print(f"   官网: {provider.get('api_website', 'N/A')}")
-                provider_tokens = provider.get('tokens')
-                if provider_tokens:
-                    print(f"   提供商价格: 输入 {provider_tokens.get('input', 'N/A')} {provider_tokens.get('unit', 'N/A')}/1K tokens, 输出 {provider_tokens.get('output', 'N/A')} {provider_tokens.get('unit', 'N/A')}/1K tokens")
+            # 统计价格信息
+            models_with_price = [m for m in models if m.token_info]
+            unique_input_prices = set(m.token_info.input for m in models_with_price)
+            unique_output_prices = set(m.token_info.output for m in models_with_price)
+            
+            print(f"\n=== 价格统计 ===")
+            print(f"有价格信息的模型: {len(models_with_price)}/{len(models)}")
+            print(f"不同的输入价格比率: {len(unique_input_prices)} 种")
+            print(f"不同的输出价格比率: {len(unique_output_prices)} 种")
+            print(f"输入价格比率范围: {min(unique_input_prices):.6f} - {max(unique_output_prices):.6f}")
+            print(f"输出价格比率范围: {min(unique_output_prices):.6f} - {max(unique_output_prices):.6f}")
+            
+        else:
+            print("获取模型数据失败")
+        
+        print("\n测试完成！")
     
-    # 获取品牌列表
-    brands = plugin.get_brands()
-    print(f"\n获取到 {len(brands)} 个品牌: {brands[:10]}...")  # 只显示前10个品牌
-    
-    # 显示数据格式验证信息
-    if models:
-        sample_model = models[0]
-        print("\n数据格式验证:")
-        print(f"✓ ModelInfo格式: 包含 brand, name, window, providers 字段")
-        print(f"✓ ProviderInfo格式: 包含 name, display_name, api_website, tokens 字段")
-        print(f"✓ TokenInfo格式: 包含 input, output, unit 字段")
-        print(f"✓ 符合editv3.json接口规范")
-    
-    print("\n测试完成！")
+    # 运行异步测试
+    asyncio.run(test_plugin())

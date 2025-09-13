@@ -300,7 +300,24 @@ class ModelService:
         if not plugin or not plugin.enabled:
             return None
         
-        # 尝试从配置文件读取提供商信息
+        # 尝试从插件的实际模型数据中获取价格信息
+        try:
+            models = await plugin.get_models()
+            if models and len(models) > 0:
+                # 使用第一个模型的价格信息作为提供商的默认价格
+                first_model = models[0]
+                if first_model.providers and len(first_model.providers) > 0:
+                    provider_info = first_model.providers[0]
+                    return ProviderInfo(
+                        name=provider_name,
+                        display_name=provider_info.display_name,
+                        api_website=provider_info.api_website,
+                        tokens=provider_info.tokens
+                    )
+        except Exception as e:
+            print(f"Error getting models from plugin {provider_name}: {e}")
+        
+        # 尝试从配置文件读取提供商信息作为备选
         try:
             config_path = self.plugin_loader.plugins_dir / provider_name / "config.json"
             if config_path.exists():
