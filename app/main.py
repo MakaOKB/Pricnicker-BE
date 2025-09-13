@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import query
+from .routers import query, providers
 
 # 创建FastAPI应用实例
 app = FastAPI(
@@ -21,7 +21,8 @@ app.add_middleware(
 )
 
 # 注册路由
-app.include_router(query.router, prefix="/v1", tags=["v1/query"])
+app.include_router(query.router, prefix="/v1/query", tags=["v1/query"])
+app.include_router(providers.router, prefix="/v1", tags=["v1/providers"])
 
 
 @app.get("/")

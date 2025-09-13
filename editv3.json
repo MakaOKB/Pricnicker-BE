@@ -19,18 +19,16 @@
       "name": "v1/brands"
     },
     {
+      "name": "v1/providers"
+    },
+    {
       "name": "models"
     },
     {
       "name": "brands"
     },
     {
-      "name": "plugins",
-      "description": "插件系统管理"
-    },
-    {
-      "name": "providers",
-      "description": "服务提供商管理"
+      "name": "providers"
     }
   ],
   "paths": {
@@ -64,11 +62,28 @@
                       "name": "DeepSeek-V3.1",
                       "data_amount": 671,
                       "window": 160000,
-                      "tokens": {
-                        "input": 4,
-                        "output": 12,
-                        "unit": "CNY"
-                      }
+                      "providers": [
+                        {
+                          "name": "deepseek",
+                          "display_name": "DeepSeek官方",
+                          "api_website": "https://www.deepseek.com",
+                          "tokens": {
+                            "input": 4,
+                            "output": 12,
+                            "unit": "CNY"
+                          }
+                        },
+                        {
+                          "name": "provider2",
+                          "display_name": "第三方提供商",
+                          "api_website": "https://api.provider2.com",
+                          "tokens": {
+                            "input": 3.8,
+                            "output": 11.5,
+                            "unit": "CNY"
+                          }
+                        }
+                      ]
                     }
                   },
                   "2": {
@@ -78,11 +93,28 @@
                       "name": "Claude-4-Sonnet",
                       "data_amount": null,
                       "window": 200000,
-                      "tokens": {
-                        "input": 3,
-                        "output": 15,
-                        "unit": "USD"
-                      }
+                      "providers": [
+                        {
+                          "name": "anthropic",
+                          "display_name": "Anthropic官方",
+                          "api_website": "https://www.anthropic.com",
+                          "tokens": {
+                            "input": 3,
+                            "output": 15,
+                            "unit": "USD"
+                          }
+                        },
+                        {
+                          "name": "provider3",
+                          "display_name": "代理提供商",
+                          "api_website": "https://api.provider3.com",
+                          "tokens": {
+                            "input": 2.8,
+                            "output": 14.2,
+                            "unit": "USD"
+                          }
+                        }
+                      ]
                     }
                   }
                 }
@@ -105,227 +137,7 @@
         "security": []
       }
     },
-    "/v1/providers": {
-      "get": {
-        "summary": "获取所有提供商信息",
-        "deprecated": false,
-        "description": "获取所有已注册的AI模型服务提供商信息",
-        "operationId": "getAllProviders",
-        "tags": [
-          "providers"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "成功获取提供商列表",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ProviderInfo"
-                  }
-                }
-              }
-            },
-            "headers": {}
-          },
-          "500": {
-            "description": "服务器内部错误",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "headers": {}
-          }
-        },
-        "security": []
-      }
-    },
-    "/v1/providers/{provider_name}": {
-      "get": {
-        "summary": "获取指定提供商信息",
-        "deprecated": false,
-        "description": "根据提供商名称获取详细信息",
-        "operationId": "getProviderByName",
-        "tags": [
-          "providers"
-        ],
-        "parameters": [
-          {
-            "name": "provider_name",
-            "in": "path",
-            "description": "提供商名称",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "deepseek"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "成功获取提供商信息",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProviderInfo"
-                }
-              }
-            },
-            "headers": {}
-          },
-          "404": {
-            "description": "未找到指定提供商",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "headers": {}
-          },
-          "500": {
-            "description": "服务器内部错误",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "headers": {}
-          }
-        },
-        "security": []
-       }
-     },
-     "/v1/providers/{provider_name}/models": {
-       "get": {
-         "summary": "获取指定提供商的模型列表",
-         "deprecated": false,
-         "description": "根据提供商名称获取该提供商支持的所有模型",
-         "operationId": "getModelsByProvider",
-         "tags": [
-           "providers"
-         ],
-         "parameters": [
-           {
-             "name": "provider_name",
-             "in": "path",
-             "description": "提供商名称",
-             "required": true,
-             "schema": {
-               "type": "string",
-               "example": "deepseek"
-             }
-           }
-         ],
-         "responses": {
-           "200": {
-             "description": "成功获取模型列表",
-             "content": {
-               "application/json": {
-                 "schema": {
-                   "$ref": "#/components/schemas/ModelsResponse"
-                 }
-               }
-             },
-             "headers": {}
-           },
-           "404": {
-             "description": "未找到指定提供商",
-             "content": {
-               "application/json": {
-                 "schema": {
-                   "$ref": "#/components/schemas/ErrorResponse"
-                 }
-               }
-             },
-             "headers": {}
-           },
-           "500": {
-             "description": "服务器内部错误",
-             "content": {
-               "application/json": {
-                 "schema": {
-                   "$ref": "#/components/schemas/ErrorResponse"
-                 }
-               }
-             },
-             "headers": {}
-           }
-         },
-         "security": []
-       }
-     },
-     "/v1/models/{model_name}/providers": {
-       "get": {
-         "summary": "获取支持指定模型的提供商列表",
-         "deprecated": false,
-         "description": "根据模型名称获取支持该模型的所有提供商",
-         "operationId": "getProvidersForModel",
-         "tags": [
-           "providers"
-         ],
-         "parameters": [
-           {
-             "name": "model_name",
-             "in": "path",
-             "description": "模型名称",
-             "required": true,
-             "schema": {
-               "type": "string",
-               "example": "DeepSeek-V3.1"
-             }
-           }
-         ],
-         "responses": {
-           "200": {
-             "description": "成功获取提供商列表",
-             "content": {
-               "application/json": {
-                 "schema": {
-                   "type": "array",
-                   "items": {
-                     "$ref": "#/components/schemas/ProviderInfo"
-                   }
-                 }
-               }
-             },
-             "headers": {}
-           },
-           "404": {
-             "description": "未找到指定模型",
-             "content": {
-               "application/json": {
-                 "schema": {
-                   "$ref": "#/components/schemas/ErrorResponse"
-                 }
-               }
-             },
-             "headers": {}
-           },
-           "500": {
-             "description": "服务器内部错误",
-             "content": {
-               "application/json": {
-                 "schema": {
-                   "$ref": "#/components/schemas/ErrorResponse"
-                 }
-               }
-             },
-             "headers": {}
-           }
-         },
-         "security": []
-       }
-     },
-     "/v1/query/models/brand/{brand_name}": {
+    "/v1/query/models/brand/{brand_name}": {
       "get": {
         "summary": "根据品牌获取模型列表",
         "deprecated": false,
@@ -444,6 +256,234 @@
         },
         "security": []
       }
+    },
+    "/v1/providers": {
+      "get": {
+        "summary": "获取所有提供商信息",
+        "deprecated": false,
+        "description": "获取所有已注册的AI模型服务提供商信息",
+        "operationId": "getAllProviders",
+        "tags": [
+          "v1/providers",
+          "providers"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功获取提供商列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderInfo"
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/providers/{provider_name}": {
+      "get": {
+        "summary": "获取指定提供商信息",
+        "deprecated": false,
+        "description": "根据提供商名称获取详细信息",
+        "operationId": "getProviderByName",
+        "tags": [
+          "v1/providers",
+          "providers"
+        ],
+        "parameters": [
+          {
+            "name": "provider_name",
+            "in": "path",
+            "description": "提供商名称",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string",
+              "example": "deepseek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取提供商信息",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderInfo"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "未找到指定提供商",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/providers/{provider_name}/models": {
+      "get": {
+        "summary": "获取指定提供商的模型列表",
+        "deprecated": false,
+        "description": "根据提供商名称获取该提供商支持的所有模型",
+        "operationId": "getModelsByProvider",
+        "tags": [
+          "v1/providers",
+          "providers"
+        ],
+        "parameters": [
+          {
+            "name": "provider_name",
+            "in": "path",
+            "description": "提供商名称",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string",
+              "example": "deepseek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取模型列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "未找到指定提供商",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/v1/models/{model_name}/providers": {
+      "get": {
+        "summary": "获取支持指定模型的提供商列表",
+        "deprecated": false,
+        "description": "根据模型名称获取支持该模型的所有提供商",
+        "operationId": "getProvidersForModel",
+        "tags": [
+          "v1/providers",
+          "providers"
+        ],
+        "parameters": [
+          {
+            "name": "model_name",
+            "in": "path",
+            "description": "模型名称",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string",
+              "example": "DeepSeek-V3.1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取提供商列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderInfo"
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "404": {
+            "description": "未找到指定模型",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
     }
   },
   "components": {
@@ -483,7 +523,12 @@
       "ModelInfo": {
         "type": "object",
         "description": "AI模型信息",
-        "required": ["brand", "name", "window", "tokens", "providers"],
+        "required": [
+          "brand",
+          "name",
+          "window",
+          "providers"
+        ],
         "properties": {
           "brand": {
             "type": "string",
@@ -497,8 +542,8 @@
           },
           "data_amount": {
             "type": "integer",
-            "nullable": true,
             "description": "训练数据量（可为空）",
+            "nullable": true,
             "example": 671
           },
           "window": {
@@ -507,7 +552,8 @@
             "example": 160000
           },
           "tokens": {
-            "$ref": "#/components/schemas/TokenInfo"
+            "$ref": "#/components/schemas/TokenInfo",
+            "description": "模型的基础价格信息（可选，具体价格请参考providers中的价格）"
           },
           "providers": {
             "type": "array",
@@ -515,12 +561,6 @@
               "$ref": "#/components/schemas/ProviderInfo"
             },
             "description": "可用的服务提供商列表"
-          },
-          "recommended_provider": {
-            "type": "string",
-            "nullable": true,
-            "description": "推荐的提供商名称",
-            "example": "deepseek"
           }
         }
       },
@@ -637,18 +677,28 @@
           }
         }
       },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "错误响应",
+        "required": [
+          "detail"
+        ],
+        "properties": {
+          "detail": {
+            "type": "string",
+            "description": "错误详情",
+            "example": "服务器内部错误"
+          }
+        }
+      },
       "ProviderInfo": {
         "type": "object",
         "description": "服务提供商信息",
         "required": [
           "name",
           "display_name",
-          "api_endpoint",
-          "reliability_score",
-          "response_time_ms",
-          "uptime_percentage",
-          "region",
-          "support_streaming"
+          "api_website",
+          "tokens"
         ],
         "properties": {
           "name": {
@@ -661,51 +711,14 @@
             "description": "提供商显示名称",
             "example": "DeepSeek"
           },
-          "api_endpoint": {
+          "api_website": {
             "type": "string",
-            "description": "API端点地址",
-            "example": "https://api.deepseek.com"
+            "description": "提供商官方网站地址",
+            "example": "https://www.deepseek.com"
           },
-          "reliability_score": {
-            "type": "number",
-            "format": "float",
-            "description": "可靠性评分(0-10)",
-            "example": 8.5
-          },
-          "response_time_ms": {
-            "type": "integer",
-            "description": "平均响应时间(毫秒)",
-            "example": 150
-          },
-          "uptime_percentage": {
-            "type": "number",
-            "format": "float",
-            "description": "正常运行时间百分比",
-            "example": 99.5
-          },
-          "region": {
-            "type": "string",
-            "description": "服务区域",
-            "example": "Global"
-          },
-          "support_streaming": {
-            "type": "boolean",
-            "description": "是否支持流式响应",
-            "example": true
-          }
-        }
-      },
-      "ErrorResponse": {
-        "type": "object",
-        "description": "错误响应",
-        "required": [
-          "detail"
-        ],
-        "properties": {
-          "detail": {
-            "type": "string",
-            "description": "错误详情",
-            "example": "服务器内部错误"
+          "tokens": {
+            "$ref": "#/components/schemas/TokenInfo",
+            "description": "该提供商的价格信息"
           }
         }
       }

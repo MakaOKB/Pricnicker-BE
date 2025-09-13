@@ -11,11 +11,18 @@ pricnicker-backend/
 │   ├── main.py              # FastAPI主应用
 │   ├── models.py            # Pydantic数据模型
 │   ├── services.py          # 业务逻辑服务
-│   ├── handlers/            # 模型服务商Handler
+│   ├── plugins/             # 模型服务商插件
 │   │   ├── __init__.py
-│   │   ├── base.py          # Handler基类
-│   │   ├── deepseek_handler.py    # DeepSeek Handler
-│   │   └── anthropic_handler.py   # Anthropic Handler
+│   │   ├── base.py          # 插件基类
+│   │   ├── loader.py        # 插件加载器
+│   │   ├── deepseek/        # DeepSeek插件
+│   │   │   ├── __init__.py
+│   │   │   ├── config.json  # 插件配置
+│   │   │   └── plugin.py    # 插件实现
+│   │   └── anthropic/       # Anthropic插件
+│   │       ├── __init__.py
+│   │       ├── config.json  # 插件配置
+│   │       └── plugin.py    # 插件实现
 │   └── routers/             # API路由
 │       ├── __init__.py
 │       └── query.py         # 查询相关路由
@@ -27,7 +34,7 @@ pricnicker-backend/
 ## 功能特性
 
 - 🚀 基于FastAPI的高性能异步API
-- 🔌 可扩展的模型服务商Handler架构
+- 🔌 可扩展的模型服务商插件架构
 - 💰 统一的价格比较接口
 - 📊 支持多种模型信息查询
 - 🛡️ 完整的错误处理和异常管理
@@ -105,55 +112,85 @@ GET /v1/query/models
 
 ## 扩展新的模型服务商
 
-### 1. 创建Handler类
+### 1. 创建插件目录结构
 
-继承`BaseModelHandler`基类，实现`get_models`方法：
+在`app/plugins/`目录下创建新的插件目录：
+
+```
+app/plugins/yourprovider/
+├── __init__.py
+├── config.json
+└── plugin.py
+```
+
+### 2. 创建插件配置文件
+
+在`config.json`中定义插件配置：
+
+```json
+{
+  "name": "yourprovider",
+  "version": "1.0.0",
+  "brand_name": "YourProvider",
+  "description": "YourProvider模型服务商插件",
+  "author": "Your Name",
+  "extra_config": {
+    "supported_models": ["YourModel-1.0", "YourModel-2.0"],
+    "default_currency": "CNY"
+  }
+}
+```
+
+### 3. 创建插件类
+
+继承`BasePlugin`基类，实现`get_models`方法：
 
 ```python
-from app.handlers.base import BaseModelHandler
-from app.models import ModelInfo, TokenInfo
 from typing import List
+from ..base import BasePlugin
+from ...models import ModelInfo, TokenInfo
 
-class YourProviderHandler(BaseModelHandler):
-    def __init__(self):
-        super().__init__("YourProvider")
+class YourproviderPlugin(BasePlugin):
+    def __init__(self, config):
+        super().__init__(config)
+        self.supported_models = config.extra_config.get("supported_models", [])
     
     async def get_models(self) -> List[ModelInfo]:
         # 实现获取模型信息的逻辑
-        return [
-            ModelInfo(
-                brand="YourProvider",
-                name="YourModel-1.0",
-                data_amount=1000,
-                window=200000,
-                tokens=TokenInfo(
-                    input=5,
-                    output=15,
-                    unit="CNY"
-                )
-            )
+        models_data = [
+            {
+                "brand": "YourProvider",
+                "name": "YourModel-1.0",
+                "data_amount": 1000,
+                "window": 200000,
+                "tokens": {"input": 5, "output": 15, "unit": "CNY"}
+            }
         ]
+        
+        models = []
+        for model_data in models_data:
+            if model_data["name"] in self.supported_models:
+                models.append(ModelInfo(
+                    brand=model_data["brand"],
+                    name=model_data["name"],
+                    data_amount=model_data["data_amount"],
+                    window=model_data["window"],
+                    tokens=TokenInfo(**model_data["tokens"]),
+                    providers=[]
+                ))
+        
+        return models
 ```
 
-### 2. 注册Handler
+### 4. 插件自动加载
 
-在`app/services.py`的`ModelService`类中添加新的Handler：
-
-```python
-from .handlers.your_provider_handler import YourProviderHandler
-
-class ModelService:
-    def __init__(self):
-        self.handlers = [
-            DeepSeekHandler(),
-            AnthropicHandler(),
-            YourProviderHandler(),  # 添加新的Handler
-        ]
-```
+插件会被系统自动发现和加载，无需手动注册。系统会扫描`app/plugins/`目录下的所有插件并自动加载。
 
 ## 开发说明
 
-- 所有Handler都应该继承`BaseModelHandler`基类
+- 所有插件都应该继承`BasePlugin`基类
+- 插件采用配置文件+实现文件的分离设计
+- 支持插件的动态加载、启用、禁用和重新加载
 - 模型信息使用Pydantic模型进行数据验证
 - 支持异步操作，提高并发性能
 - 错误处理统一使用HTTPException

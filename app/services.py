@@ -1,5 +1,5 @@
 from typing import List, Dict, Optional
-from .models import ModelInfo
+from .models import ModelInfo, ProviderInfo
 from .plugins.loader import PluginLoader
 from .plugins.base import BasePlugin
 
@@ -53,7 +53,7 @@ class ModelService:
         """获取所有服务商的模型列表
         
         Returns:
-            List[ModelInfo]: 所有模型信息的合并列表
+            List[ModelInfo]: 所有模型信息的合并列表（包含提供商信息）
         """
         # 确保插件已加载
         await self._ensure_plugins_loaded()
@@ -67,6 +67,19 @@ class ModelService:
                 
             try:
                 models = await plugin.get_models()
+                # 为每个模型添加提供商信息
+                provider_info = await self.get_provider_by_name(plugin_name)
+                if provider_info:
+                    for model in models:
+                        # 获取该模型的所有提供商
+                        all_providers = await self.get_providers_for_model(model.name)
+                        model.providers = all_providers if all_providers else [provider_info]
+                        # 设置推荐提供商（当前提供商或评分最高的）
+                        if all_providers:
+                            model.recommended_provider = all_providers[0].name
+                        else:
+                            model.recommended_provider = plugin_name
+                
                 all_models.extend(models)
             except Exception as e:
                 # 记录错误但不中断其他插件的执行
@@ -212,3 +225,151 @@ class ModelService:
             }
         
         return status
+    
+    async def get_all_providers(self) -> List[ProviderInfo]:
+        """获取所有服务提供商信息
+        
+        Returns:
+            List[ProviderInfo]: 所有提供商的信息列表
+        """
+        await self._ensure_plugins_loaded()
+        
+        providers = []
+        for plugin_name, plugin in self.plugins.items():
+            if plugin.enabled:
+                try:
+                    # 从插件配置中读取提供商信息
+                    config_path = self.plugin_loader.plugins_dir / plugin_name / "config.json"
+                    if config_path.exists():
+                        import json
+                        with open(config_path, 'r', encoding='utf-8') as f:
+                            config = json.load(f)
+                        
+                        if 'provider_info' in config:
+                            provider_data = config['provider_info']
+                            provider_info = ProviderInfo(
+                                name=plugin_name,
+                                display_name=provider_data.get('display_name', config.get('brand_name', plugin_name)),
+                                api_endpoint=provider_data.get('api_endpoint', config.get('base_url', '')),
+                                reliability_score=provider_data.get('reliability_score', 8.0),
+                                response_time_ms=provider_data.get('response_time_ms', 200),
+                                uptime_percentage=provider_data.get('uptime_percentage', 99.0),
+                                region=provider_data.get('region', 'Global'),
+                                support_streaming=provider_data.get('support_streaming', False)
+                            )
+                            providers.append(provider_info)
+                        else:
+                            # 如果没有provider_info配置，使用默认值
+                            provider_info = ProviderInfo(
+                                name=plugin_name,
+                                display_name=plugin.config.brand_name,
+                                api_endpoint=getattr(plugin.config, 'base_url', ''),
+                                reliability_score=8.5,
+                                response_time_ms=150,
+                                uptime_percentage=99.5,
+                                region="Global",
+                                support_streaming=True
+                            )
+                            providers.append(provider_info)
+                    else:
+                        # 配置文件不存在时使用默认值
+                        provider_info = ProviderInfo(
+                            name=plugin_name,
+                            display_name=plugin.config.brand_name,
+                            api_endpoint=getattr(plugin.config, 'base_url', ''),
+                            reliability_score=8.5,
+                            response_time_ms=150,
+                            uptime_percentage=99.5,
+                            region="Global",
+                            support_streaming=True
+                        )
+                        providers.append(provider_info)
+                except Exception as e:
+                    print(f"Error loading provider info for {plugin_name}: {e}")
+                    continue
+        
+        return providers
+    
+    async def get_provider_by_name(self, provider_name: str) -> Optional[ProviderInfo]:
+        """根据名称获取提供商信息
+        
+        Args:
+            provider_name: 提供商名称
+            
+        Returns:
+            Optional[ProviderInfo]: 提供商信息，如果不存在则返回None
+        """
+        await self._ensure_plugins_loaded()
+        
+        plugin = self.plugins.get(provider_name)
+        if not plugin or not plugin.enabled:
+            return None
+            
+        return ProviderInfo(
+            name=provider_name,
+            display_name=plugin.config.brand_name,
+            api_endpoint=getattr(plugin.config, 'base_url', ''),
+            reliability_score=8.5,
+            response_time_ms=150,
+            uptime_percentage=99.5,
+            region="Global",
+            support_streaming=True
+        )
+    
+    async def get_models_by_provider(self, provider_name: str) -> List[ModelInfo]:
+        """根据提供商获取模型列表
+        
+        Args:
+            provider_name: 提供商名称
+            
+        Returns:
+            List[ModelInfo]: 该提供商支持的模型列表
+        """
+        await self._ensure_plugins_loaded()
+        
+        plugin = self.plugins.get(provider_name)
+        if not plugin or not plugin.enabled:
+            return []
+            
+        try:
+            models = await plugin.get_models()
+            # 为每个模型添加提供商信息
+            provider_info = await self.get_provider_by_name(provider_name)
+            if provider_info:
+                for model in models:
+                    model.providers = [provider_info]
+                    model.recommended_provider = provider_name
+            return models
+        except Exception as e:
+            print(f"Error getting models from provider {provider_name}: {e}")
+            return []
+    
+    async def get_providers_for_model(self, model_name: str) -> List[ProviderInfo]:
+        """获取支持指定模型的提供商列表
+        
+        Args:
+            model_name: 模型名称
+            
+        Returns:
+            List[ProviderInfo]: 支持该模型的提供商列表（按推荐程度排序）
+        """
+        await self._ensure_plugins_loaded()
+        
+        providers = []
+        for plugin_name, plugin in self.plugins.items():
+            if plugin.enabled:
+                try:
+                    models = await plugin.get_models()
+                    # 检查该插件是否支持指定模型
+                    for model in models:
+                        if model.name == model_name:
+                            provider_info = await self.get_provider_by_name(plugin_name)
+                            if provider_info:
+                                providers.append(provider_info)
+                            break
+                except Exception as e:
+                    print(f"Error checking models from provider {plugin_name}: {e}")
+        
+        # 按可靠性评分排序（降序）
+        providers.sort(key=lambda p: p.reliability_score, reverse=True)
+        return providers

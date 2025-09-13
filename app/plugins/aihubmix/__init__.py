@@ -4,13 +4,13 @@
 支持的模型包括DeepSeek-V3.1和DeepSeek-V2.5等。
 """
 
-from .plugin import DeepseekPlugin
+from .plugin import AihubmixPlugin
 
 __version__ = "1.0.0"
 __author__ = "PricNicker Team"
 __description__ = "DeepSeek模型服务商插件"
 
 # 插件入口点
-PluginClass = DeepseekPlugin
+PluginClass = AihubmixPlugin
 
-__all__ = ["DeepseekPlugin", "PluginClass"]
+__all__ = ["AihubmixPlugin", "PluginClass"]

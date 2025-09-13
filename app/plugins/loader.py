@@ -178,8 +178,9 @@ class PluginLoader:
             Dict[str, bool]: 插件名称到加载结果的映射
         """
         results = {}
-        plugin_names = self.discover_plugins()
+        plugin_configs = self.discover_plugins()
         
+        plugin_names = [config.name for config in plugin_configs]
         print(f"Discovered {len(plugin_names)} plugins: {plugin_names}")
         
         for plugin_name in plugin_names:
