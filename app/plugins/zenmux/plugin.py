@@ -25,6 +25,8 @@ import re
 import requests
 from typing import Dict, List, Optional
 from requests.exceptions import RequestException, Timeout, ConnectionError
+from ..base import BasePlugin, PluginConfig
+from ...models import ModelInfo, TokenInfo, ProviderInfo
 
 # 配置日志
 logging.basicConfig(
@@ -37,7 +39,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-class ZenMuxPlugin:
+class ZenmuxPlugin(BasePlugin):
     """
     ZenMux 价格爬虫插件
     
@@ -72,19 +74,20 @@ class ZenMuxPlugin:
     DEFAULT_CTOKEN = "173hyG0fqu47kxXs6LWw2OBy"
     DEFAULT_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     
-    def __init__(self):
+    def __init__(self, config: PluginConfig):
         """初始化插件"""
+        super().__init__(config)
         self.base_url = self.BASE_URL
         self.models_url = self.MODELS_URL
         self.session = requests.Session()
-        self.config = {
+        self.plugin_config = {
             'timeout': 30,
             'user_agent': self.DEFAULT_USER_AGENT
         }
         
         # 设置请求头
         self.session.headers.update({
-            'User-Agent': self.config['user_agent'],
+            'User-Agent': self.plugin_config['user_agent'],
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
             'Accept-Encoding': 'gzip, deflate',
@@ -103,12 +106,7 @@ class ZenMuxPlugin:
         通过ZenMux API获取真实的模型数据
         
         使用 ZenMux 官方 API 接口获取最新的模型数据，包括价格、上下文窗口、
-        使用量等信息。支持重试机制和指数退避策略。
-        
-        API 参数:
-        - ctoken: 客户端令牌
-        - sort: 排序方式 (topweekly)
-        - keyword: 搜索关键词
+        使用量等信息。根据用户要求，在有UA的情况下不需要任何参数。
         
         Returns:
             Optional[List[Dict]]: 成功时返回模型数据列表，失败时返回 None
@@ -118,11 +116,8 @@ class ZenMuxPlugin:
             json.JSONDecodeError: JSON 解析异常
         """
         api_url = self.API_URL
-        params = {
-            'ctoken': self.DEFAULT_CTOKEN,
-            'sort': 'topweekly',
-            'keyword': ''
-        }
+        # 根据用户要求，在有UA的情况下不需要任何参数
+        params = {}
         
         max_retries = 3
         base_delay = 1  # 基础延迟时间（秒）
@@ -133,7 +128,7 @@ class ZenMuxPlugin:
                 response = requests.get(
                     api_url, 
                     params=params,
-                    timeout=self.config['timeout'],
+                    timeout=self.plugin_config['timeout'],
                     headers={
                         'User-Agent': self.DEFAULT_USER_AGENT,
                         'Accept': 'application/json, text/plain, */*',
@@ -328,245 +323,38 @@ class ZenMuxPlugin:
         except (ValueError, TypeError):
             return "0"
     
-    def _get_models_from_web_search_fallback(self) -> Optional[List[Dict]]:
-        """
-        备用方法：当API失败时使用的模型数据
-        
-        Returns:
-            List[Dict]: 备用模型数据列表
-        """
-        logger.warning("使用备用模型数据")
-        try:
-            # 最小化的备用数据集
-            fallback_models = [
-                {
-                    'name': 'Claude Sonnet 4',
-                    'brand': 'Anthropic',
-                    'tokens_used': '472.93M',
-                    'context_window': '1000.00K',
-                    'input_price': 3.0,
-                    'output_price': 15.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Claude Sonnet 4 significantly enhances the capabilities of its predecessor, Sonnet 3.7, excelling in both coding and reasoning tasks with improved precision and controllability.'
-                },
-                {
-                    'name': 'Claude 3.7 Sonnet',
-                    'brand': 'Anthropic', 
-                    'tokens_used': '36.86M',
-                    'context_window': '200.00K',
-                    'input_price': 3.0,
-                    'output_price': 15.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Claude 3.7 Sonnet is an advanced large language model with improved reasoning, coding, and problem-solving capabilities.'
-                },
-                {
-                    'name': 'GPT-4.1 Mini',
-                    'brand': 'OpenAI',
-                    'tokens_used': '8.62M',
-                    'context_window': '1.05M',
-                    'input_price': 0.4,
-                    'output_price': 1.6,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'GPT-4.1 Mini is a mid-sized model delivering performance competitive with GPT-4o at substantially lower latency and cost.'
-                },
-                {
-                    'name': 'Kimi K2 0905',
-                    'brand': 'MoonshotAI',
-                    'tokens_used': '7.06M',
-                    'context_window': '256.00K',
-                    'input_price': 0.6,
-                    'output_price': 2.5,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Kimi K2 0905 is the September update featuring 1 trillion total parameters with 32 billion active per forward pass.'
-                },
-                {
-                    'name': 'Gemini 2.5 Pro',
-                    'brand': 'Google',
-                    'tokens_used': '4.37M',
-                    'context_window': '1.05M',
-                    'input_price': 1.25,
-                    'output_price': 10.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Gemini 2.5 Pro is Google\'s state-of-the-art AI model designed for advanced reasoning, coding, mathematics, and scientific tasks.'
-                },
-                {
-                    'name': 'GPT-5',
-                    'brand': 'OpenAI',
-                    'tokens_used': '3.40M',
-                    'context_window': '400.00K',
-                    'input_price': 1.25,
-                    'output_price': 10.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'GPT-5 is OpenAI\'s most advanced model, offering major improvements in reasoning, code quality, and user experience.'
-                },
-                {
-                    'name': 'GPT-4.1',
-                    'brand': 'OpenAI',
-                    'tokens_used': '3.01M',
-                    'context_window': '1.05M',
-                    'input_price': 2.0,
-                    'output_price': 8.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'GPT-4.1 is a flagship large language model optimized for advanced instruction following, real-world software engineering, and long-context reasoning.'
-                },
-                {
-                    'name': 'Gemini 2.5 Flash',
-                    'brand': 'Google',
-                    'tokens_used': '2.83M',
-                    'context_window': '1.05M',
-                    'input_price': 0.075,
-                    'output_price': 0.3,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Gemini 2.5 Flash is Google\'s state-of-the-art workhorse model, specifically designed for advanced reasoning, coding, mathematics, and scientific tasks.'
-                },
-                {
-                    'name': 'DeepSeek Chat V3.1',
-                    'brand': 'DeepSeek',
-                    'tokens_used': '2.50M',
-                    'context_window': '128.00K',
-                    'input_price': 0.56,
-                    'output_price': 1.68,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'DeepSeek-V3 is the latest model from the DeepSeek team, building upon the instruction following and coding abilities of the previous versions.'
-                },
-                {
-                    'name': 'Gemini 2.5 Flash Lite',
-                    'brand': 'Google',
-                    'tokens_used': '2.20M',
-                    'context_window': '1.05M',
-                    'input_price': 0.10,
-                    'output_price': 0.40,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Gemini 2.5 Flash-Lite is a lightweight reasoning model in the Gemini 2.5 family, optimized for ultra-low latency and cost efficiency.'
-                },
-                {
-                    'name': 'Claude Opus 4.1',
-                    'brand': 'Anthropic',
-                    'tokens_used': '1.95M',
-                    'context_window': '200.00K',
-                    'input_price': 15.0,
-                    'output_price': 75.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Claude Opus 4.1 is an updated version of Anthropic\'s flagship model, offering improved performance in coding, reasoning, and agentic tasks.'
-                },
-                {
-                    'name': 'o4 Mini',
-                    'brand': 'OpenAI',
-                    'tokens_used': '1.80M',
-                    'context_window': '200.00K',
-                    'input_price': 1.10,
-                    'output_price': 4.40,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'OpenAI o4-mini is a compact reasoning model in the o-series, optimized for fast, cost-efficient performance while retaining strong multimodal and agentic capabilities.'
-                },
-                {
-                    'name': 'Gemini 2.0 Flash Lite',
-                    'brand': 'Google',
-                    'tokens_used': '1.65M',
-                    'context_window': '1.05M',
-                    'input_price': 0.075,
-                    'output_price': 0.30,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Gemini 2.0 Flash Lite offers a significantly faster time to first token (TTFT) compared to Gemini Flash 1.5, while maintaining quality on par with larger models.'
-                },
-                {
-                    'name': 'DeepSeek V3.1',
-                    'brand': 'DeepSeek',
-                    'tokens_used': '1.50M',
-                    'context_window': '128.00K',
-                    'input_price': 0.28,
-                    'output_price': 1.11,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'DeepSeek-V3.1 is a large hybrid reasoning model (671B parameters, 37B active) that supports both thinking and non-thinking modes via prompt templates.'
-                },
-                {
-                    'name': 'Kimi K2',
-                    'brand': 'MoonshotAI',
-                    'tokens_used': '1.35M',
-                    'context_window': '128.00K',
-                    'input_price': 0.6,
-                    'output_price': 2.5,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Kimi K2 Instruct is a large-scale Mixture-of-Experts (MoE) language model developed by Moonshot AI, featuring 1 trillion total parameters.'
-                },
-                {
-                    'name': 'Gemini 2.0 Flash',
-                    'brand': 'Google',
-                    'tokens_used': '1.20M',
-                    'context_window': '1.05M',
-                    'input_price': 0.075,
-                    'output_price': 0.30,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Gemini Flash 2.0 offers a significantly faster time to first token (TTFT) compared to Gemini Flash 1.5, while maintaining quality on par with larger models.'
-                },
-                {
-                    'name': 'GPT-5 Chat',
-                    'brand': 'OpenAI',
-                    'tokens_used': '1.10M',
-                    'context_window': '128.00K',
-                    'input_price': 1.25,
-                    'output_price': 10.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'GPT-5 Chat is designed for advanced, natural, multimodal, and context-aware conversations for enterprise applications.'
-                },
-                {
-                    'name': 'GPT-4o',
-                    'brand': 'OpenAI',
-                    'tokens_used': '0.95M',
-                    'context_window': '128.00K',
-                    'input_price': 2.5,
-                    'output_price': 10.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'GPT-4o ("o" for "omni") is OpenAI\'s latest AI model, supporting both text and image inputs with text outputs.'
-                },
-                {
-                    'name': 'Claude 3.5 Haiku',
-                    'brand': 'Anthropic',
-                    'tokens_used': '0.80M',
-                    'context_window': '200.00K',
-                    'input_price': 1.0,
-                    'output_price': 5.0,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'Claude 3.5 Haiku features offers enhanced capabilities in speed, coding accuracy, and tool use.'
-                },
-                {
-                    'name': 'R1 0528',
-                    'brand': 'DeepSeek',
-                    'tokens_used': '0.65M',
-                    'context_window': '128.00K',
-                    'input_price': 0.28,
-                    'output_price': 1.11,
-                    'currency': 'USD',
-                    'unit': 'M tokens',
-                    'description': 'DeepSeek R1 is a reasoning model optimized for complex problem-solving tasks.'
-                }
-            ]
-            
-            logger.info(f"使用真实ZenMux数据，包含 {len(known_models)} 个模型")
-            return known_models
-            
+        # 备用数据方法已移除，只使用真实API数据
         except Exception as e:
             logger.error(f"获取模型数据失败: {e}")
             return []
+    
+    async def initialize(self) -> bool:
+        """初始化插件
+        
+        Returns:
+            bool: 初始化是否成功
+        """
+        try:
+            # 验证配置
+            return self.validate_config()
+        except Exception as e:
+            logger.error(f"插件初始化失败: {e}")
+            return False
+    
+    def get_plugin_info(self) -> Dict:
+        """获取插件信息
+        
+        Returns:
+            Dict: 插件信息字典
+        """
+        return {
+            'name': self.config.name,
+            'version': self.config.version,
+            'description': self.config.description,
+            'author': self.config.author,
+            'brand_name': self.config.brand_name,
+            'enabled': self.enabled
+        }
     
 
     
@@ -624,7 +412,7 @@ class ZenMuxPlugin:
         """
         try:
             # 检查基本结构 - v4.json规范
-            required_fields = ['brand', 'name', 'window', 'tokens', 'providers']
+            required_fields = ['brand', 'name', 'window', 'providers']
             for field in required_fields:
                 if field not in model_info:
                     logger.debug(f"转换后数据缺少字段: {field}")
@@ -644,17 +432,7 @@ class ZenMuxPlugin:
                     logger.debug(f"recommended_provider字段类型错误，应为str或null: {type(recommended_provider)}")
                     return False
             
-            # 检查tokens结构
-            tokens = model_info.get('tokens', {})
-            if not isinstance(tokens, dict):
-                logger.debug("tokens字段不是字典类型")
-                return False
-            
-            token_fields = ['input', 'output', 'unit']
-            for field in token_fields:
-                if field not in tokens:
-                    logger.debug(f"tokens缺少字段: {field}")
-                    return False
+
             
             # 检查providers结构
             providers = model_info.get('providers', [])
@@ -708,28 +486,9 @@ class ZenMuxPlugin:
             logger.warning(f"解析上下文长度失败: {context_str}, 错误: {e}")
             return 4096
     
-    def _create_provider_info(self, model_data: Dict) -> Dict:
-        """
-        创建提供商信息
-        
-        Args:
-            model_data: 模型数据字典
-            
-        Returns:
-            Dict: 提供商信息
-        """
-        return {
-            'name': 'zenmux',
-            'display_name': 'ZenMux',
-            'api_website': 'https://zenmux.ai',
-            'tokens': {
-                'input': model_data.get('input_price', 0.0),
-                'output': model_data.get('output_price', 0.0),
-                'unit': model_data.get('currency', 'USD')
-            }
-        }
+
     
-    def get_models(self) -> List[Dict]:
+    async def get_models(self) -> List[ModelInfo]:
         """
         获取所有模型信息
         
@@ -772,16 +531,12 @@ class ZenMuxPlugin:
         try:
             logger.info("🚀 开始获取ZenMux模型数据")
             
-            # 优先使用API获取数据
-            logger.info("📡 尝试使用API获取数据...")
+            # 只使用API获取真实数据，不再使用备用数据
+            logger.info("📡 使用API获取真实数据...")
             dynamic_data = self._get_models_from_api()
             
             if not dynamic_data:
-                logger.warning("⚠️ API获取失败，使用备用数据")
-                dynamic_data = self._get_models_from_web_search_fallback()
-            
-            if not dynamic_data:
-                logger.error("❌ 未能获取到任何模型数据")
+                logger.error("❌ API获取失败，无法获取模型数据")
                 return []
             
             logger.info(f"📊 获取到 {len(dynamic_data)} 条原始数据，开始转换格式...")
@@ -824,25 +579,54 @@ class ZenMuxPlugin:
                             except (ValueError, TypeError):
                                 data_amount = None
                     
-                    model_info = {
-                        'brand': model_data.get('brand', 'Unknown'),
-                        'name': model_data.get('name', 'Unknown'),
-                        'data_amount': data_amount,
-                        'window': self._parse_context_length(model_data.get('context_window', '4K')),
-                        'tokens': {
-                            'input': float(model_data.get('input_price', 0.0)),
-                            'output': float(model_data.get('output_price', 0.0)),
-                            'unit': model_data.get('currency', 'USD')
-                        },
-                        'providers': [self._create_provider_info(model_data)],
-                        'recommended_provider': 'zenmux'
-                    }
+                    # 创建TokenInfo对象
+                    token_info = TokenInfo(
+                        input=float(model_data.get('input_price', 0.0)),
+                        output=float(model_data.get('output_price', 0.0)),
+                        unit=model_data.get('currency', 'CNY')
+                    )
+                    
+                    # 创建ProviderInfo对象
+                    provider_info = ProviderInfo(
+                        name='zenmux',
+                        display_name='ZenMux',
+                        api_website='https://zenmux.ai',
+                        tokens=token_info
+                    )
+                    
+                    # 创建ModelInfo对象
+                    model_info = ModelInfo(
+                        brand=model_data.get('brand', 'Unknown'),
+                        name=model_data.get('name', 'Unknown'),
+                        data_amount=data_amount,
+                        window=self._parse_context_length(model_data.get('context_window', '4K')),
+                        providers=[provider_info],
+                        recommended_provider='zenmux'
+                    )
                     
                     # 验证转换后的数据
-                    if self._validate_converted_model(model_info):
+                    model_dict = {
+                        'brand': model_info.brand,
+                        'name': model_info.name,
+                        'data_amount': model_info.data_amount,
+                        'window': model_info.window,
+                        'providers': [{
+                            'name': provider.name,
+                            'display_name': provider.display_name,
+                            'api_website': provider.api_website,
+                            'tokens': {
+                                 'input': provider.tokens.input,
+                                 'output': provider.tokens.output,
+                                 'unit': provider.tokens.unit
+                             }
+                        } for provider in model_info.providers],
+                        'recommended_provider': model_info.recommended_provider
+                    }
+                    
+                    if self._validate_converted_model(model_dict):
                         models.append(model_info)
                         successful_conversions += 1
-                        logger.debug(f"✅ 模型 {model_info['name']} 转换成功")
+                        logger.debug(f"✅ 模型 {model_info.name} 转换成功")
                     else:
                         logger.warning(f"⚠️ 模型 {model_data.get('name', 'Unknown')} 转换后验证失败")
                         failed_conversions += 1
@@ -867,7 +651,7 @@ class ZenMuxPlugin:
             if models:
                 logger.info(f"🎉 成功获取 {len(models)} 个有效模型")
                 # 输出品牌统计
-                brands = set(model['brand'] for model in models)
+                brands = set(model.brand for model in models)
                 logger.info(f"📋 涉及品牌: {', '.join(sorted(brands))}")
             else:
                 logger.error("💥 没有获取到任何有效模型数据")
@@ -915,7 +699,7 @@ class ZenMuxPlugin:
             # 提取品牌并去重
             brands = set()
             for model in models:
-                brand = model.get('brand', '').strip()
+                brand = model.brand.strip()
                 if brand and brand != 'Unknown':
                     brands.add(brand)
             
@@ -940,7 +724,7 @@ class ZenMuxPlugin:
         try:
             models = self.get_models()
             for model in models:
-                if model.get('name', '').lower() == model_name.lower():
+                if model.name.lower() == model_name.lower():
                     return model
             return None
         except Exception as e:
@@ -979,9 +763,9 @@ class ZenMuxPlugin:
             # 1. 验证基本配置参数
             required_configs = ['timeout', 'user_agent']
             for config_key in required_configs:
-                if config_key not in self.config:
+                if config_key not in self.plugin_config:
                     validation_errors.append(f"缺少必需配置: {config_key}")
-                elif self.config[config_key] is None:
+                elif self.plugin_config[config_key] is None:
                     validation_errors.append(f"配置值为空: {config_key}")
             
             # 2. 验证URL格式
@@ -1054,22 +838,21 @@ if __name__ == "__main__":
     if models:
         print("\n前5个模型详细信息（v4.json格式）:")
         for i, model in enumerate(models[:5]):
-            print(f"\n{i+1}. {model.get('name', 'N/A')}")
-            print(f"   品牌: {model.get('brand', 'N/A')}")
-            print(f"   窗口大小: {model.get('window', 'N/A')}")
-            print(f"   数据量: {model.get('data_amount', 'N/A')}")
+            print(f"\n{i+1}. {model.name}")
+            print(f"   品牌: {model.brand}")
+            print(f"   窗口大小: {model.window}")
+            print(f"   数据量: {model.data_amount}")
             
-            tokens = model.get('tokens')
-            if tokens:
-                print(f"   价格信息: 输入 {tokens.get('input', 'N/A')} {tokens.get('unit', 'N/A')}/1M tokens, 输出 {tokens.get('output', 'N/A')} {tokens.get('unit', 'N/A')}/1M tokens")
+            if model.providers:
+                provider = model.providers[0]
+                print(f"   价格信息: 输入 {provider.tokens.input} {provider.tokens.unit}, 输出 {provider.tokens.output} {provider.tokens.unit}")
             else:
                 print(f"   价格信息: 无")
             
-            providers = model.get('providers', [])
-            if providers:
-                provider = providers[0]
-                print(f"   提供商: {provider.get('display_name', 'N/A')} ({provider.get('name', 'N/A')})")
-                print(f"   官网: {provider.get('api_website', 'N/A')}")
+            if model.providers:
+                provider = model.providers[0]
+                print(f"   提供商: {provider.display_name} ({provider.name})")
+                print(f"   官网: {provider.api_website}")
     
     # 获取品牌列表
     brands = plugin.get_brands()

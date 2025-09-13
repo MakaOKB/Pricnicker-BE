@@ -11,6 +11,6 @@ __author__ = "PricNicker Team"
 __description__ = "ZenMux模型服务商插件"
 
 # 插件入口点
-PluginClass = ZenMuxPlugin
+PluginClass = ZenmuxPlugin
 
-__all__ = ["ZenMuxPlugin", "PluginClass"]
+__all__ = ["ZenmuxPlugin", "PluginClass"]
