@@ -15,16 +15,17 @@ pricnicker-backend/
 │   │   ├── __init__.py
 │   │   ├── base.py          # 插件基类
 │   │   ├── loader.py        # 插件加载器
-│   │   ├── deepseek/        # DeepSeek插件
+│   │   ├── aihubmix/        # AIHubMix插件
 │   │   │   ├── __init__.py
 │   │   │   ├── config.json  # 插件配置
 │   │   │   └── plugin.py    # 插件实现
-│   │   └── anthropic/       # Anthropic插件
+│   │   └── zenmux/          # ZenMux插件
 │   │       ├── __init__.py
 │   │       ├── config.json  # 插件配置
 │   │       └── plugin.py    # 插件实现
 │   └── routers/             # API路由
 │       ├── __init__.py
+│       ├── providers.py     # 服务商相关路由
 │       └── query.py         # 查询相关路由
 ├── main.py                  # 启动脚本
 ├── requirements.txt         # 项目依赖
@@ -40,30 +41,128 @@ pricnicker-backend/
 - 🛡️ 完整的错误处理和异常管理
 - 📖 自动生成的API文档
 
+## 环境要求
+
+- Python 3.8+
+- pip 或 conda 包管理器
+- 网络连接（用于获取模型数据）
+
 ## 快速开始
 
-### 1. 安装依赖
+### 1. 克隆项目
+
+```bash
+git clone <repository-url>
+cd pricnicker-backend
+```
+
+### 2. 创建虚拟环境（推荐）
+
+```bash
+# 使用 venv
+python3 -m venv venv
+source venv/bin/activate  # macOS/Linux
+# 或 venv\Scripts\activate  # Windows
+
+# 使用 conda
+conda create -n pricnicker python=3.9
+conda activate pricnicker
+```
+
+### 3. 安装依赖
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. 启动服务
+### 4. 启动服务
 
 ```bash
-# 方式1: 使用启动脚本
-python main.py
-
-# 方式2: 使用uvicorn直接启动
+# 开发模式（推荐）
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# 或使用启动脚本
+python main.py
 ```
 
-### 3. 访问API文档
+### 5. 验证服务
 
-启动服务后，访问以下地址查看API文档：
+启动服务后，访问以下地址验证服务正常运行：
 
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+- 健康检查: http://localhost:8000/health
+- API文档: http://localhost:8000/docs
+- ReDoc文档: http://localhost:8000/redoc
+- 模型列表: http://localhost:8000/v1/query/models
+
+## 生产部署
+
+### 使用 Docker 部署
+
+1. 创建 Dockerfile：
+
+```dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+2. 构建和运行：
+
+```bash
+docker build -t pricnicker-backend .
+docker run -d -p 8000:8000 --name pricnicker pricnicker-backend
+```
+
+### 使用 Gunicorn 部署
+
+```bash
+# 安装 gunicorn
+pip install gunicorn
+
+# 启动服务
+gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+```
+
+### 使用 Nginx 反向代理
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### 环境变量配置
+
+可以通过环境变量配置服务：
+
+```bash
+# 设置端口
+export PORT=8000
+
+# 设置日志级别
+export LOG_LEVEL=INFO
+
+# 设置CORS允许的域名
+export ALLOWED_ORIGINS="http://localhost:3000,https://yourdomain.com"
+```
 
 ## API接口
 
@@ -80,26 +179,42 @@ GET /v1/query/models
 ```json
 [
   {
-    "brand": "DeepSeek",
-    "name": "DeepSeek-V3.1",
-    "data_amount": 671,
-    "window": 160000,
-    "tokens": {
-      "input": 4,
-      "output": 12,
-      "unit": "CNY"
-    }
+    "brand": "Z.AI",
+    "name": "GLM 4.5 Air (Z.AI)",
+    "data_amount": null,
+    "window": 128000,
+    "providers": [
+      {
+        "name": "zenmux",
+        "display_name": "ZenMux",
+        "api_website": "https://zenmux.ai",
+        "tokens": {
+          "input": 0.14,
+          "output": 0.56,
+          "unit": "CNY"
+        }
+      }
+    ],
+    "recommended_provider": "zenmux"
   },
   {
-    "brand": "Anthropic",
-    "name": "Claude-4-Sonnet",
+    "brand": "OpenAI",
+    "name": "GPT-4o (OpenAI)",
     "data_amount": null,
-    "window": 1000000,
-    "tokens": {
-      "input": 3.3,
-      "output": 16,
-      "unit": "CNY"
-    }
+    "window": 128000,
+    "providers": [
+      {
+        "name": "aihubmix",
+        "display_name": "AIHubMix",
+        "api_website": "https://aihubmix.com",
+        "tokens": {
+          "input": 35.0,
+          "output": 105.0,
+          "unit": "CNY"
+        }
+      }
+    ],
+    "recommended_provider": "aihubmix"
   }
 ]
 ```
@@ -134,8 +249,12 @@ app/plugins/yourprovider/
   "brand_name": "YourProvider",
   "description": "YourProvider模型服务商插件",
   "author": "Your Name",
+  "enabled": true,
   "extra_config": {
-    "supported_models": ["YourModel-1.0", "YourModel-2.0"],
+    "base_url": "https://api.yourprovider.com",
+    "models_url": "https://api.yourprovider.com/models",
+    "timeout": 30,
+    "user_agent": "Mozilla/5.0 (compatible; PricnickerBot/1.0)",
     "default_currency": "CNY"
   }
 }
@@ -143,43 +262,120 @@ app/plugins/yourprovider/
 
 ### 3. 创建插件类
 
-继承`BasePlugin`基类，实现`get_models`方法：
+继承`BasePlugin`基类，实现必要的方法：
 
 ```python
-from typing import List
-from ..base import BasePlugin
-from ...models import ModelInfo, TokenInfo
+import requests
+from typing import List, Dict, Optional
+from ..base import BasePlugin, PluginConfig
+from ...models import ModelInfo, TokenInfo, ProviderInfo
 
 class YourproviderPlugin(BasePlugin):
-    def __init__(self, config):
+    """YourProvider模型服务商插件"""
+    
+    def __init__(self, config: PluginConfig):
         super().__init__(config)
-        self.supported_models = config.extra_config.get("supported_models", [])
+        self.base_url = self.plugin_config.get('base_url')
+        self.models_url = self.plugin_config.get('models_url')
+        self.timeout = self.plugin_config.get('timeout', 30)
+        self.user_agent = self.plugin_config.get('user_agent')
+    
+    async def initialize(self) -> bool:
+        """初始化插件，验证配置"""
+        try:
+            # 验证必需配置
+            if not self.base_url or not self.models_url:
+                self.logger.error("缺少必需的URL配置")
+                return False
+            
+            # 测试API连接
+            response = requests.get(
+                self.base_url, 
+                timeout=self.timeout,
+                headers={'User-Agent': self.user_agent}
+            )
+            
+            if response.status_code == 200:
+                self.logger.info("插件初始化成功")
+                return True
+            else:
+                self.logger.error(f"API连接失败: {response.status_code}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"插件初始化失败: {e}")
+            return False
     
     async def get_models(self) -> List[ModelInfo]:
-        # 实现获取模型信息的逻辑
-        models_data = [
-            {
-                "brand": "YourProvider",
-                "name": "YourModel-1.0",
-                "data_amount": 1000,
-                "window": 200000,
-                "tokens": {"input": 5, "output": 15, "unit": "CNY"}
-            }
-        ]
-        
+        """获取模型列表"""
+        try:
+            # 调用API获取模型数据
+            response = requests.get(
+                self.models_url,
+                timeout=self.timeout,
+                headers={'User-Agent': self.user_agent}
+            )
+            
+            if response.status_code != 200:
+                self.logger.error(f"获取模型数据失败: {response.status_code}")
+                return []
+            
+            api_data = response.json()
+            return self._convert_to_model_info(api_data)
+            
+        except Exception as e:
+            self.logger.error(f"获取模型数据异常: {e}")
+            return []
+    
+    def _convert_to_model_info(self, api_data: List[Dict]) -> List[ModelInfo]:
+        """将API数据转换为ModelInfo格式"""
         models = []
-        for model_data in models_data:
-            if model_data["name"] in self.supported_models:
-                models.append(ModelInfo(
-                    brand=model_data["brand"],
-                    name=model_data["name"],
-                    data_amount=model_data["data_amount"],
-                    window=model_data["window"],
-                    tokens=TokenInfo(**model_data["tokens"]),
-                    providers=[]
-                ))
+        
+        for model_data in api_data:
+            try:
+                # 创建TokenInfo对象
+                token_info = TokenInfo(
+                    input=float(model_data.get('input_price', 0.0)),
+                    output=float(model_data.get('output_price', 0.0)),
+                    unit=model_data.get('currency', 'CNY')
+                )
+                
+                # 创建ProviderInfo对象
+                provider_info = ProviderInfo(
+                    name='yourprovider',
+                    display_name='YourProvider',
+                    api_website=self.base_url,
+                    tokens=token_info
+                )
+                
+                # 创建ModelInfo对象
+                model_info = ModelInfo(
+                    brand=model_data.get('brand', 'YourProvider'),
+                    name=model_data.get('name', 'Unknown'),
+                    data_amount=model_data.get('data_amount'),
+                    window=model_data.get('context_window', 4096),
+                    providers=[provider_info],
+                    recommended_provider='yourprovider'
+                )
+                
+                models.append(model_info)
+                
+            except Exception as e:
+                self.logger.warning(f"转换模型数据失败: {e}")
+                continue
         
         return models
+    
+    def get_plugin_info(self) -> Dict:
+        """获取插件信息"""
+        return {
+            'name': self.config.name,
+            'version': self.config.version,
+            'description': self.config.description,
+            'author': self.config.author,
+            'enabled': self.enabled,
+            'status': 'active' if self.enabled else 'inactive'
+        }
 ```
 
 ### 4. 插件自动加载
