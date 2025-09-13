@@ -237,9 +237,16 @@ class DmxPlugin(BasePlugin):
                         input_price = pricing_info.get('CompletionRatio', 0) / 1000000
                         output_price = pricing_info.get('PromptRatio', 0) / 1000000
                     elif isinstance(pricing_info, (int, float)):
-                        # 如果是数字，假设这是统一的价格比例
-                        input_price = pricing_info / 1000000
-                        output_price = pricing_info / 1000000
+                        # 调试：打印原始价格值
+                        logger.debug(f"模型 {model_name} 原始价格: {pricing_info}")
+                        # 如果是数字，直接使用（不除以1000000，因为API返回的可能已经是正确的价格）
+                        # 根据观察到的数值范围，这些可能是以微分为单位的价格
+                        if pricing_info >= 1000:  # 如果是大数值，可能需要转换
+                            input_price = pricing_info / 1000000
+                            output_price = pricing_info / 1000000
+                        else:  # 如果是小数值，直接使用
+                            input_price = float(pricing_info)
+                            output_price = float(pricing_info)
                     else:
                         logger.warning(f"未知的价格信息格式: {type(pricing_info)}")
                         continue
