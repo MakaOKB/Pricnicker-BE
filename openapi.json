@@ -1,0 +1,580 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pricnicker API",
+    "description": "AI模型价格查询系统API - 提供多个服务商的AI模型价格和信息查询服务",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Pricnicker Team",
+      "email": "support@pricnicker.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "本地开发服务器"
+    },
+    {
+      "url": "https://api.pc.msaos.tech",
+      "description": "生产环境服务器"
+    }
+  ],
+  "tags": [
+    {
+      "name": "models",
+      "description": "AI模型信息查询"
+    },
+    {
+      "name": "brands",
+      "description": "服务商品牌管理"
+    },
+    {
+      "name": "plugins",
+      "description": "插件系统管理"
+    }
+  ],
+  "paths": {
+    "/v1/query/models": {
+      "get": {
+        "tags": ["models"],
+        "summary": "获取全局模型列表",
+        "description": "获取所有已注册模型服务商的模型信息，包括价格、上下文窗口等详细信息",
+        "operationId": "getAllModels",
+        "responses": {
+          "200": {
+            "description": "成功获取模型列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModelInfo"
+                  }
+                },
+                "example": [
+                  {
+                    "brand": "DeepSeek",
+                    "name": "DeepSeek-V3.1",
+                    "data_amount": 671,
+                    "window": 160000,
+                    "tokens": {
+                      "input": 4.0,
+                      "output": 12.0,
+                      "unit": "CNY"
+                    }
+                  },
+                  {
+                    "brand": "Anthropic",
+                    "name": "Claude-4-Sonnet",
+                    "data_amount": null,
+                    "window": 200000,
+                    "tokens": {
+                      "input": 3.0,
+                      "output": 15.0,
+                      "unit": "USD"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/query/models/brands": {
+      "get": {
+        "tags": ["brands"],
+        "summary": "获取可用品牌列表",
+        "description": "获取所有可用的模型服务商品牌列表",
+        "operationId": "getAvailableBrands",
+        "responses": {
+          "200": {
+            "description": "成功获取品牌列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandsResponse"
+                },
+                "example": {
+                  "brands": ["Anthropic", "DeepSeek"],
+                  "count": 2
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/query/models/brand/{brand_name}": {
+      "get": {
+        "tags": ["models"],
+        "summary": "根据品牌获取模型列表",
+        "description": "根据指定的品牌名称获取该品牌下的所有模型信息",
+        "operationId": "getModelsByBrand",
+        "parameters": [
+          {
+            "name": "brand_name",
+            "in": "path",
+            "required": true,
+            "description": "品牌名称",
+            "schema": {
+              "type": "string",
+              "example": "DeepSeek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功获取指定品牌的模型列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ModelInfo"
+                  }
+                },
+                "example": [
+                  {
+                    "brand": "DeepSeek",
+                    "name": "DeepSeek-V3.1",
+                    "data_amount": 671,
+                    "window": 160000,
+                    "tokens": {
+                      "input": 4.0,
+                      "output": 12.0,
+                      "unit": "CNY"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "未找到指定品牌的模型",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/query/plugins/status": {
+      "get": {
+        "tags": ["plugins"],
+        "summary": "获取插件状态",
+        "description": "获取所有插件的状态信息，包括启用状态和基本信息",
+        "operationId": "getPluginStatus",
+        "responses": {
+          "200": {
+            "description": "成功获取插件状态",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginStatusResponse"
+                },
+                "example": {
+                  "plugins": {
+                    "deepseek": {
+                      "name": "deepseek",
+                      "version": "1.0.0",
+                      "brand": "DeepSeek",
+                      "enabled": true,
+                      "description": "DeepSeek模型服务商插件"
+                    },
+                    "anthropic": {
+                      "name": "anthropic",
+                      "version": "1.0.0",
+                      "brand": "Anthropic",
+                      "enabled": true,
+                      "description": "Anthropic模型服务商插件"
+                    }
+                  },
+                  "total_count": 2,
+                  "enabled_count": 2
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/query/plugins/{plugin_name}/enable": {
+      "post": {
+        "tags": ["plugins"],
+        "summary": "启用插件",
+        "description": "启用指定名称的插件",
+        "operationId": "enablePlugin",
+        "parameters": [
+          {
+            "name": "plugin_name",
+            "in": "path",
+            "required": true,
+            "description": "插件名称",
+            "schema": {
+              "type": "string",
+              "example": "deepseek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "插件启用成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                },
+                "example": {
+                  "message": "插件 deepseek 已启用",
+                  "success": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "插件不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/query/plugins/{plugin_name}/disable": {
+      "post": {
+        "tags": ["plugins"],
+        "summary": "禁用插件",
+        "description": "禁用指定名称的插件",
+        "operationId": "disablePlugin",
+        "parameters": [
+          {
+            "name": "plugin_name",
+            "in": "path",
+            "required": true,
+            "description": "插件名称",
+            "schema": {
+              "type": "string",
+              "example": "deepseek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "插件禁用成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                },
+                "example": {
+                  "message": "插件 deepseek 已禁用",
+                  "success": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "插件不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/query/plugins/{plugin_name}/reload": {
+      "post": {
+        "tags": ["plugins"],
+        "summary": "重新加载插件",
+        "description": "重新加载指定名称的插件",
+        "operationId": "reloadPlugin",
+        "parameters": [
+          {
+            "name": "plugin_name",
+            "in": "path",
+            "required": true,
+            "description": "插件名称",
+            "schema": {
+              "type": "string",
+              "example": "deepseek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "插件重新加载成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponse"
+                },
+                "example": {
+                  "message": "插件 deepseek 已重新加载",
+                  "success": true
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "插件重新加载失败",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "服务器内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TokenInfo": {
+        "type": "object",
+        "description": "代币价格信息",
+        "required": ["input", "output", "unit"],
+        "properties": {
+          "input": {
+            "type": "number",
+            "format": "float",
+            "description": "输入代币价格",
+            "example": 4.0
+          },
+          "output": {
+            "type": "number",
+            "format": "float",
+            "description": "输出代币价格",
+            "example": 12.0
+          },
+          "unit": {
+            "type": "string",
+            "description": "价格单位",
+            "example": "CNY",
+            "enum": ["CNY", "USD"]
+          }
+        }
+      },
+      "ModelInfo": {
+        "type": "object",
+        "description": "AI模型信息",
+        "required": ["brand", "name", "window", "tokens"],
+        "properties": {
+          "brand": {
+            "type": "string",
+            "description": "品牌名称",
+            "example": "DeepSeek"
+          },
+          "name": {
+            "type": "string",
+            "description": "模型名称",
+            "example": "DeepSeek-V3.1"
+          },
+          "data_amount": {
+            "type": "integer",
+            "nullable": true,
+            "description": "训练数据量（可为空）",
+            "example": 671
+          },
+          "window": {
+            "type": "integer",
+            "description": "上下文窗口大小",
+            "example": 160000
+          },
+          "tokens": {
+            "$ref": "#/components/schemas/TokenInfo"
+          }
+        }
+      },
+      "BrandsResponse": {
+        "type": "object",
+        "description": "品牌列表响应",
+        "required": ["brands", "count"],
+        "properties": {
+          "brands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "品牌名称列表",
+            "example": ["Anthropic", "DeepSeek"]
+          },
+          "count": {
+            "type": "integer",
+            "description": "品牌总数",
+            "example": 2
+          }
+        }
+      },
+      "PluginInfo": {
+        "type": "object",
+        "description": "插件信息",
+        "required": ["name", "version", "brand", "enabled", "description"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "插件名称",
+            "example": "deepseek"
+          },
+          "version": {
+            "type": "string",
+            "description": "插件版本",
+            "example": "1.0.0"
+          },
+          "brand": {
+            "type": "string",
+            "description": "对应品牌",
+            "example": "DeepSeek"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "是否启用",
+            "example": true
+          },
+          "description": {
+            "type": "string",
+            "description": "插件描述",
+            "example": "DeepSeek模型服务商插件"
+          }
+        }
+      },
+      "PluginStatusResponse": {
+        "type": "object",
+        "description": "插件状态响应",
+        "required": ["plugins", "total_count", "enabled_count"],
+        "properties": {
+          "plugins": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/PluginInfo"
+            },
+            "description": "插件信息字典"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "插件总数",
+            "example": 2
+          },
+          "enabled_count": {
+            "type": "integer",
+            "description": "已启用插件数",
+            "example": 2
+          }
+        }
+      },
+      "OperationResponse": {
+        "type": "object",
+        "description": "操作结果响应",
+        "required": ["message", "success"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "操作结果消息",
+            "example": "操作成功"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "操作是否成功",
+            "example": true
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "错误响应",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "type": "string",
+            "description": "错误详情",
+            "example": "服务器内部错误"
+          }
+        }
+      }
+    }
+  }
+}
